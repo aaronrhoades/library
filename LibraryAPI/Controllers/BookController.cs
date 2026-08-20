@@ -1,0 +1,58 @@
+using LibraryAPI.Services;
+using LibraryAPI.Models;
+using Microsoft.AspNetCore.Mvc;
+
+namespace LibraryAPI.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class BookController : ControllerBase
+{
+    private readonly IBookService _bookService;
+    public BookController(IBookService bookService)
+    {
+        _bookService = bookService;
+    }
+
+    [HttpGet(Name = "GetBooks")]
+    public async Task<ActionResult<IEnumerable<Book>>> Get()
+    {
+        var books = await _bookService.GetAllBooksAsync();
+        return Ok(books);
+    }
+    [HttpGet("{id}", Name = "GetBookById")]
+    public async Task<ActionResult<Book>> Get(Guid id)
+    {
+        var book = await _bookService.GetBookByIdAsync(id);
+        if (book == null)
+        {
+            return NotFound();
+        }
+        return book;
+    }
+    [HttpPost(Name = "CreateBook")]
+    public async Task<ActionResult> Post(Book book)
+    {
+        await _bookService.AddBookAsync(book);
+        return CreatedAtAction(nameof(Get), new { id = book.Id }, book);
+    }
+
+    [HttpPut("{id}", Name = "UpdateBook")]
+    public async Task<ActionResult> Put(Guid id, Book book)
+    {
+        if (id != book.Id)
+        {
+            return BadRequest();
+        }
+
+        await _bookService.UpdateBookAsync(book);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}", Name = "DeleteBook")]
+    public async Task<ActionResult> Delete(Guid id)
+    {
+        await _bookService.DeleteBookAsync(id);
+        return NoContent();
+    }
+}
