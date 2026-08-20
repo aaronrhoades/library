@@ -17,4 +17,10 @@ export class BookService {
     saveBook(book: Omit<IBook, 'id'>) : Observable<IBook> {
         return this.http.post<IBook>(`${environment.apiUrl}/book`, book);
     }
+    updateBook(book: IBook) : Observable<IBook> {
+        return this.http.put<IBook>(`${environment.apiUrl}/book/${book.id}`, book);
+    }
+    deleteBook(id: string) : Observable<void> {
+        return this.http.delete<void>(`${environment.apiUrl}/book/${id}`);
+    }
 }

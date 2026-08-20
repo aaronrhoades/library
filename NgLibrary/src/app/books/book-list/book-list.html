@@ -1,4 +1,7 @@
-<button routerLink="/book/add">Add Book</button>
-@for(book of books(); track book.id) {
-  <app-book-card [book]="book"></app-book-card>
-}
+<div class="container">
+
+  <button routerLink="/book/add" class="btn btn-primary">Add Book</button>
+  @for(book of books(); track book.id) {
+    <app-book-card [book]="book"></app-book-card>
+  }
+</div>

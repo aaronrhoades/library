@@ -1,43 +1,54 @@
-<form (submit)="onSubmit($event)">
-    <div>
-        <label for="title">Title</label>
-        <input type="text" id="title" [formField]="bookAddForm.title">
-    </div>
+<div class="container">
+    @if(id()) {
+        <button (click)="backToDetails()" class="btn btn-primary mb-3">Back to Details</button>
+        <h1>Edit Book</h1>
+    } @else {
+        <button (click)="backToBookList()" class="btn btn-primary mb-3">Back to List</button>
+        <h1>Add Book</h1>
+    }
 
-    <div>
-        <label for="author">Author</label>
-        <input type="text" id="author" [formField]="bookAddForm.author">
-    </div>
+    <form (submit)="onSubmit($event)">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" id="title" [formField]="bookAddForm.title" class="form-control">
+        </div>
+        
+        <div class="mb-3">
+            <label for="author" class="form-label">Author</label>
+            <input type="text" id="author" [formField]="bookAddForm.author" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Publisher</label>
+            <input id="description" [formField]="bookAddForm.publisher" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="publishedDate" class="form-label">Published Date</label>
+            <input type="date" id="publishedDate" [formField]="bookAddForm.publishedDate" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="categories" class="form-label">Categories (ctrl + click to select multiple)</label>
+            <select
+                id="categories"
+                class="form-control"
+                name="categoryIds"
+                [ngModel]="bookAddModel().categoryIds"
+                (ngModelChange)="bookAddModel.update(model => ({ ...model, categoryIds: $event }))"
+                multiple>
+                @for(category of categories(); track category.id) {
+                    <option [value]="category.id">{{ category.name }}</option>
+                }
+            </select>
+            <div class="form-text">Selected: {{selectedCategories()?.map(category => category.name)?.join(', ')}}</div>
+        </div>
+        <div class="mb-3">
+            <label for="pages" class="form-label">Pages</label>
+            <input type="number" id="pages" [formField]="bookAddForm.pages" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="isbn" class="form-label">ISBN</label>
+            <input type="text" id="isbn" [formField]="bookAddForm.isbn" class="form-control">
+        </div>
 
-    <div>
-        <label for="description">Publisher</label>
-        <input id="description" [formField]="bookAddForm.publisher">
-    </div>
-    <div>
-        <label for="publishedDate">Published Date</label>
-        <input type="date" id="publishedDate" [formField]="bookAddForm.publishedDate">
-    </div>
-    <div>
-        <label for="categories">Categories</label>
-        <select
-            id="categories"
-            name="categoryIds"
-            [ngModel]="bookAddModel().categoryIds"
-            (ngModelChange)="bookAddModel.update(model => ({ ...model, categoryIds: $event }))"
-            multiple>
-            @for(category of categories(); track category.id) {
-                <option [value]="category.id">{{ category.name }}</option>
-            }
-        </select>
-    </div>
-    <div>
-        <label for="pages">Pages</label>
-        <input type="number" id="pages" [formField]="bookAddForm.pages">
-    </div>
-    <div>
-        <label for="isbn">ISBN</label>
-        <input type="text" id="isbn" [formField]="bookAddForm.isbn">
-    </div>
-
-    <button type="submit">Add Book</button>
-</form>
+        <button type="submit" class="btn btn-primary mt-3">{{id() ? "Update Book" : "Add Book"}}</button>
+    </form>
+</div>

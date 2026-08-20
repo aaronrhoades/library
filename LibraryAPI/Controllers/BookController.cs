@@ -46,7 +46,12 @@ public class BookController : ControllerBase
             return BadRequest();
         }
 
-        await _bookService.UpdateBookAsync(book);
+        var updated = await _bookService.UpdateBookAsync(book);
+        if (!updated)
+        {
+            return NotFound();
+        }
+
         return NoContent();
     }
 

@@ -29,4 +29,17 @@ export class BookDetail {
   goBack() {
     this.router.navigate(['/books']);
   }
+  onEdit() {
+    this.router.navigate([`/book/edit/${this.id()}`]);
+  }
+  onDelete() {
+    const bookId = this.id();
+    if (bookId) {
+      // Call the delete method from the BookService
+      this.bookService.deleteBook(bookId).subscribe(() => {
+        // After deletion, navigate back to the book list
+        this.router.navigate(['/books']);
+      });
+    }
+  }
 }

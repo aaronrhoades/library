@@ -8,7 +8,7 @@ public interface IBookService
     Task<List<Book>> GetAllBooksAsync();
     Task<Book?> GetBookByIdAsync(Guid id);
     Task AddBookAsync(Book book);
-    Task UpdateBookAsync(Book book);
+    Task<bool> UpdateBookAsync(Book book);
     Task DeleteBookAsync(Guid id);
 }
 public class BookService : IBookService
@@ -41,10 +41,41 @@ public class BookService : IBookService
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateBookAsync(Book book)
+    public async Task<bool> UpdateBookAsync(Book book)
     {
-        _context.Books.Update(book);
+        var existingBook = await _context.Books
+            .Include(existing => existing.Categories)
+            .SingleOrDefaultAsync(existing => existing.Id == book.Id);
+
+        if (existingBook == null)
+        {
+            return false;
+        }
+
+        existingBook.Title = book.Title;
+        existingBook.Author = book.Author;
+        existingBook.ISBN = book.ISBN;
+        existingBook.Publisher = book.Publisher;
+        existingBook.PublishedDate = book.PublishedDate;
+        existingBook.Pages = book.Pages;
+
+        var categoryIds = book.Categories
+            .Select(category => category.Id)
+            .Distinct()
+            .ToList();
+
+        var categories = await _context.Categories
+            .Where(category => categoryIds.Contains(category.Id))
+            .ToListAsync();
+
+        existingBook.Categories.Clear();
+        foreach (var category in categories)
+        {
+            existingBook.Categories.Add(category);
+        }
+
         await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task DeleteBookAsync(Guid id)
