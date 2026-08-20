@@ -2,3 +2,4 @@
 <p>Author: {{ book().author }}</p>
 <p>Published: {{ book().publishedDate | date:'M/dd/yyyy' }}</p>
 <p>Categories: {{ categories().join(', ') }}</p>
+<button (click)="onViewDetails()">View Details</button>
