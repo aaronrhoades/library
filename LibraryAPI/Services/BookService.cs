@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LibraryAPI.Services;
 public interface IBookService
 {
+    Task<List<Book>> SearchBooksAsync(string searchTerm);
     Task<List<Book>> GetAllBooksAsync();
     Task<Book?> GetBookByIdAsync(Guid id);
     Task AddBookAsync(Book book);
@@ -18,6 +19,10 @@ public class BookService : IBookService
     public BookService(ApplicationDbContext context)
     {
         _context = context;
+    }
+    public async Task<List<Book>> SearchBooksAsync(string searchTerm)
+    {
+        return await _context.Books.Where(book => book.Title.Contains(searchTerm)).ToListAsync();
     }
 
     public async Task<List<Book>> GetAllBooksAsync()

@@ -14,6 +14,14 @@ public class BookController : ControllerBase
         _bookService = bookService;
     }
 
+    [HttpGet("search", Name = "SearchBooks")]
+    public async Task<ActionResult<IEnumerable<Book>>> Search([FromQuery] string searchTerm)
+    {
+        var books = await _bookService.SearchBooksAsync(searchTerm);
+
+        return Ok(books);
+    }
+
     [HttpGet(Name = "GetBooks")]
     public async Task<ActionResult<IEnumerable<Book>>> Get()
     {

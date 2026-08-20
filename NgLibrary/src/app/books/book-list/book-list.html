@@ -1,6 +1,9 @@
 <div class="container">
-
   <button routerLink="/book/add" class="btn btn-primary">Add Book</button>
+  <form class="my-5">
+    <input class="form-control" placeholder="Type to search..." [formField]="searchForm.title">
+  </form>
+
   @for(book of books(); track book.id) {
     <app-book-card [book]="book"></app-book-card>
   }
