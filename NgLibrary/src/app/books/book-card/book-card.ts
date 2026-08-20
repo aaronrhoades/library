@@ -4,11 +4,11 @@ import { IBook } from '@models/iBook';
 
 @Component({
   imports: [DatePipe],
-  selector: 'app-book-detail',
-  styleUrl: './book-detail.scss',
-  templateUrl: './book-detail.html',
+  selector: 'app-book-card',
+  styleUrl: './book-card.scss',
+  templateUrl: './book-card.html',
 })
-export class BookDetail {
+export class BookCard {
   book = input.required<IBook>();
   categories = signal<string[]>([]);
   ngOnInit() {
