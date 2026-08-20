@@ -33,6 +33,7 @@ public class BookController : ControllerBase
     [HttpPost(Name = "CreateBook")]
     public async Task<ActionResult> Post(Book book)
     {
+        book.Id = Guid.NewGuid(); // Ensure a new GUID is generated for the book
         await _bookService.AddBookAsync(book);
         return CreatedAtAction(nameof(Get), new { id = book.Id }, book);
     }

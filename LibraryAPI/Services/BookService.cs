@@ -32,6 +32,11 @@ public class BookService : IBookService
 
     public async Task AddBookAsync(Book book)
     {
+        foreach (var category in book.Categories)
+        {
+            _context.Entry(category).State = EntityState.Unchanged;
+        }
+
         _context.Books.Add(book);
         await _context.SaveChangesAsync();
     }

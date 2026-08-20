@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { IBook } from '@models/iBook';
 
 @Component({
@@ -10,4 +10,8 @@ import { IBook } from '@models/iBook';
 })
 export class BookDetail {
   book = input.required<IBook>();
+  categories = signal<string[]>([]);
+  ngOnInit() {
+    this.categories.set(this.book().categories.map(category => category.name));
+  }
 }

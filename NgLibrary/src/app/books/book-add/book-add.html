@@ -1,0 +1,43 @@
+<form (submit)="onSubmit($event)">
+    <div>
+        <label for="title">Title</label>
+        <input type="text" id="title" [formField]="bookAddForm.title">
+    </div>
+
+    <div>
+        <label for="author">Author</label>
+        <input type="text" id="author" [formField]="bookAddForm.author">
+    </div>
+
+    <div>
+        <label for="description">Publisher</label>
+        <input id="description" [formField]="bookAddForm.publisher">
+    </div>
+    <div>
+        <label for="publishedDate">Published Date</label>
+        <input type="date" id="publishedDate" [formField]="bookAddForm.publishedDate">
+    </div>
+    <div>
+        <label for="categories">Categories</label>
+        <select
+            id="categories"
+            name="categoryIds"
+            [ngModel]="bookAddModel().categoryIds"
+            (ngModelChange)="bookAddModel.update(model => ({ ...model, categoryIds: $event }))"
+            multiple>
+            @for(category of categories(); track category.id) {
+                <option [value]="category.id">{{ category.name }}</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label for="pages">Pages</label>
+        <input type="number" id="pages" [formField]="bookAddForm.pages">
+    </div>
+    <div>
+        <label for="isbn">ISBN</label>
+        <input type="text" id="isbn" [formField]="bookAddForm.isbn">
+    </div>
+
+    <button type="submit">Add Book</button>
+</form>

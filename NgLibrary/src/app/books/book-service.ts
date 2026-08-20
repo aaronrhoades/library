@@ -14,4 +14,7 @@ export class BookService {
     getBookById(id: string) : Observable<IBook> {
         return this.http.get<IBook>(`${environment.apiUrl}/book/${id}`);
     }
+    saveBook(book: Omit<IBook, 'id'>) : Observable<IBook> {
+        return this.http.post<IBook>(`${environment.apiUrl}/book`, book);
+    }
 }

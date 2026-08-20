@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build LibraryAPI",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/LibraryAPI/LibraryAPI.csproj",
+                "--configuration",
+                "Debug",
+                "--no-restore"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/LibraryAPI"
+            },
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
