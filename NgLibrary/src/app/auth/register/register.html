@@ -1,0 +1,17 @@
+<form (submit)="onSubmit($event)">
+    <div class="my-3">
+        <label>Email</label>
+        <input type="text" class="form-control" [formField]="registerForm.email">
+    </div>
+    <div class="my-3">
+        <label>Username</label>
+        <input type="text" class="form-control" [formField]="registerForm.userName">
+    </div>
+    <div class="my-3">
+        <label>Password</label>
+        <input type="password" class="form-control" [formField]="registerForm.password">
+    </div>
+    <button class="btn btn-primary" type="submit">
+        Register
+    </button>
+</form>

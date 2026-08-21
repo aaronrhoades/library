@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LibraryAPI.Models;
 
 namespace LibraryAPI.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -15,7 +17,27 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        SeedRoles(modelBuilder);
         SeedData(modelBuilder);
+    }
+
+    private void SeedRoles(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<IdentityRole<Guid>>().HasData(
+            new IdentityRole<Guid>
+            {
+                Id = new Guid("f2c9c8f1-5c7e-4f50-9f12-7d2e9b8a1c34"),
+                Name = "Librarian",
+                NormalizedName = "LIBRARIAN",
+                ConcurrencyStamp = "f6f9e4d1-4b84-4b9f-9b0a-4f2b1b0f8a11"
+            },
+            new IdentityRole<Guid>
+            {
+                Id = new Guid("a7d4e6b2-9f31-4c58-8a06-2b5e1d7c9f43"),
+                Name = "Customer",
+                NormalizedName = "CUSTOMER",
+                ConcurrencyStamp = "c3a7d2e8-6f11-4e90-8b5c-2d4f7a9e1b22"
+            });
     }
 
     private void SeedData(ModelBuilder modelBuilder)

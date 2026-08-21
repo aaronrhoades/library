@@ -1,8 +1,11 @@
 using LibraryAPI.Services;
 using LibraryAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryAPI.Controllers;
+
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class CategoryController : ControllerBase

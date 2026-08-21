@@ -1,0 +1,16 @@
+<form (submit)="onSubmit($event)">
+    <div class="my-3">
+        <label>Email</label>
+        <input type="text" class="form-control" [formField]="loginForm.email">
+    </div>
+    <div class="my-3">
+        <label>Password</label>
+        <input type="password" class="form-control" [formField]="loginForm.password">
+    </div>
+    @if(loginError()) {
+        <p class="text-danger">{{loginError()}}</p>
+    }
+    <button class="btn btn-primary" type="submit">
+        Login
+    </button>
+</form>

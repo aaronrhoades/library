@@ -1,0 +1,9 @@
+<div class="container">
+    @if(isNewUser()){
+        <app-register (registrationComplete)="switchLoginRegister()"></app-register>
+    }
+    @else {
+        <app-login></app-login>
+    }
+    <a (click)="switchLoginRegister($event)" href="#">{{isNewUser() ? "I already have an account" : "Sign Up"}}</a>
+</div>
