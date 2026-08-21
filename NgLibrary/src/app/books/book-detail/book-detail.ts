@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import { IBook } from '@models/iBook';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth-service';
+import { CartService } from '../../cart/cart-service';
 
 @Component({
   imports: [DatePipe],
@@ -18,7 +19,7 @@ export class BookDetail {
   book = signal<IBook | null>(null);
   categories = signal<string[]>([]);
   authService = inject(AuthService);
-
+  cartService = inject(CartService);
   ngOnInit() {
     const bookId = this.id();
     if (bookId) {
@@ -30,6 +31,11 @@ export class BookDetail {
   }
   goBack() {
     this.router.navigate(['/books']);
+  }
+  addToCart() {
+    if(this.book() != null) {
+      this.cartService.addToCart(this.book() as IBook);
+    }
   }
   onEdit() {
     this.router.navigate([`/book/edit/${this.id()}`]);

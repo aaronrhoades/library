@@ -16,6 +16,12 @@
       <p>Categories: {{ categories()?.join(', ') }}</p>
       <p>ISBN: {{ book()?.isbn }}</p>
       <p>Pages: {{ book()?.pages }}</p>
+      @if (!!authService.userRoles()?.find(x => x === 'Customer')) {
+        <button (click)="addToCart()" class="btn btn-success" 
+            [disabled]="(!book()?.isAvailable || cartService.isInCart(book()))">
+            Add to Cart
+        </button>
+      }
     </div>
     <div class="col-md-6 featured-image">
       <img [src]="book()?.imageUrl" class="mw-100 h-auto" alt="alt text">

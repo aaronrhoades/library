@@ -6,8 +6,8 @@
         @if(isLoggedIn$ | async) {
             <ul class="nav nav-pills">
                 <li class="nav-item"><a class="nav-link" routerLink="/books" routerLinkActive="active">Books</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Cart</a></li>
-                <li class="navitem"><button class="btn btn-primary" (click)="logOut()">Log Out</button></li>
+                <li class="nav-item"><a class="nav-link" routerLink="/cart" routerLinkActive="active">Cart</a></li>
+                <li class="navitem"><button class="btn btn-secondary ms-4" (click)="logOut()">Log Out</button></li>
             </ul>
         }
     </header>

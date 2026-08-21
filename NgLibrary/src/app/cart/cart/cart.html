@@ -1,0 +1,10 @@
+<div class="container">
+    @if(cartService.cart().length > 0) {
+        @for(cartItem of cartService.cart(); track cartItem.id) {
+            <app-cart-item [cartItem]="cartItem"></app-cart-item>
+        }
+    }
+    @else {
+        <p>Your cart is empty. <a routerLink="/books">View books</a> to add books to your cart.</p>
+    }
+</div>
