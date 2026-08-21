@@ -36,6 +36,11 @@ export class AuthService {
 
   // 2. Run on app initialization to check if a valid cookie already exists
   checkSession() : Observable<UserProfile | null> {
+    const storedToken = this.getTokenFromLocalStorage();
+    if (storedToken) {
+      this.tokenSignal.set(storedToken);
+    }
+
     return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`).pipe(
       tap(userProfile => {
         if(!!userProfile) {
@@ -104,5 +109,27 @@ export class AuthService {
 
   assignRole(roleAssignment: IRoleAssignment): Observable<unknown>{
     return this.http.post(`${this.apiUrl}/auth/assign-role`, roleAssignment);
+  }
+
+  getTokenFromLocalStorage(): LoginResponse | null {
+    const accessToken = localStorage.getItem('auth_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    const expireTime = localStorage.getItem('expire_time');
+
+    if (!accessToken || !refreshToken || !expireTime) {
+      this.tokenSignal.set(null);
+      return null;
+    }
+
+    const expiresIn = Math.max(0, new Date(expireTime).getTime() - Date.now());
+    const storedToken: LoginResponse = {
+      accessToken,
+      refreshToken,
+      expiresIn,
+      tokenType: 'Bearer'
+    };
+
+    this.tokenSignal.set(storedToken);
+    return storedToken;
   }
 }

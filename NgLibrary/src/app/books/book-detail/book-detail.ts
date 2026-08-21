@@ -3,6 +3,7 @@ import { BookService } from '../book-service';
 import { DatePipe } from '@angular/common';
 import { IBook } from '@models/iBook';
 import { Router } from '@angular/router';
+import { AuthService } from '../../auth/auth-service';
 
 @Component({
   imports: [DatePipe],
@@ -16,6 +17,7 @@ export class BookDetail {
   bookService = inject(BookService);
   book = signal<IBook | null>(null);
   categories = signal<string[]>([]);
+  authService = inject(AuthService);
 
   ngOnInit() {
     const bookId = this.id();

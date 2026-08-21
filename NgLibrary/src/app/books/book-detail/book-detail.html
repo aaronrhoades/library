@@ -1,10 +1,12 @@
 <div class="container p-4">
   <button (click)="goBack()" class="btn btn-primary">Back</button>
   <h1>{{ book()?.title }}</h1>
-  <a (click)="onEdit()" class="btn btn-secondary">Edit</a>
-  <button class="btn btn-danger" (click)="onDelete()">
-    Delete
-  </button>
+  @if(!!authService.userRoles()?.find(x => x === 'Librarian')) {
+    <a (click)="onEdit()" class="btn btn-secondary">Edit</a>
+    <button class="btn btn-danger" (click)="onDelete()">
+      Delete
+    </button>
+  }
   <p>Author: {{ book()?.author }}</p>
   <p>Publisher: {{ book()?.publisher }}</p>
   <p>Published: {{ book()?.publishedDate | date:'M/dd/yyyy' }}</p>

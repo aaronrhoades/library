@@ -15,7 +15,7 @@ public class CategoryController : ControllerBase
     {
         _categoryService = categoryService;
     }
-
+    [Authorize(Roles = "Librarian,Customer")]
     [HttpGet(Name = "GetCategories")]
     public async Task<ActionResult<IEnumerable<Category>>> Get()
     {

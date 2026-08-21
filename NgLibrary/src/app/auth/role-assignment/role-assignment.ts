@@ -4,7 +4,7 @@ import { IRole } from '@models/iRole';
 import { AuthService } from '../auth-service';
 import { IRoleAssignment } from '@models/iRoleAssignment';
 import { Router } from '@angular/router';
-import { map, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 
 @Component({
   imports: [FormField],
@@ -21,7 +21,7 @@ export class RoleAssignment implements OnInit{
     required(schema.role),
     readonly(schema.email)
   })
-
+  
   ngOnInit() {
     this.authService.getAllRoles().subscribe(
       {
@@ -41,7 +41,7 @@ export class RoleAssignment implements OnInit{
     const formValue = this.roleAssignmentForm().value()
     this.authService.assignRole({
       email: formValue.email,
-      role: this.roles().find(x=> x.id = formValue.role)?.name || ''
+      role: this.roles().find(x=> x.id === formValue.role)?.name || ''
 
     }).pipe(
       switchMap(x => {
