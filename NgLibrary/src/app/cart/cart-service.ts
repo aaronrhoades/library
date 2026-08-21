@@ -1,8 +1,13 @@
-import { Service, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Service, signal } from '@angular/core';
+import { environment } from '@environments/environment';
 import { IBook } from '@models/iBook';
+import { Observable, tap } from 'rxjs';
 
 @Service()
 export class CartService {
+    private http = inject(HttpClient);
+    private apiUrl = environment.apiUrl;
     private readonly _cart = signal<IBook[]>(this.loadCart());
     readonly cart = this._cart.asReadonly();
 
@@ -36,6 +41,16 @@ export class CartService {
         }
 
         return this._cart().some(item => item.id === book.id);
+    }
+
+    checkout() : Observable<IBook[]>{
+        return this.http.patch<IBook[]>(`${this.apiUrl}/book/rent`, this.cart().map(b => b.id))
+        .pipe(
+            tap((x) => {
+                console.log(x);
+                this.clearCart();
+            })
+        );
     }
 
     private saveCart(items: IBook[]) {

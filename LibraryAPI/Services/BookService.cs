@@ -11,6 +11,9 @@ public interface IBookService
     Task AddBookAsync(Book book);
     Task<bool> UpdateBookAsync(Book book);
     Task DeleteBookAsync(Guid id);
+    Task<List<Book>?> RentBooks(Guid[] bookIds, Guid userId);
+
+    Task<bool> ReturnBook(Guid bookId);
 }
 public class BookService : IBookService
 {
@@ -88,7 +91,6 @@ public class BookService : IBookService
         await _context.SaveChangesAsync();
         return true;
     }
-
     public async Task DeleteBookAsync(Guid id)
     {
         var book = await _context.Books.FindAsync(id);
@@ -97,5 +99,47 @@ public class BookService : IBookService
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
         }
+    }
+    public async Task<List<Book>?> RentBooks(Guid[] bookIds, Guid userId)
+    {
+        
+        var user = await _context.Users.FindAsync(userId);
+        if(user is null)
+        {
+            return null;
+        }
+        DateTime dueDate = DateTime.Now.Date.AddDays(5);
+        var booksToRent = await _context.Books.Where(book => bookIds.Contains(book.Id)).ToListAsync();
+
+        if(booksToRent is null || booksToRent.Count == 0)
+        {
+            return null;
+        }
+        var rentedBooks = new List<Book>();
+        booksToRent.ForEach(b => {
+            if(b.UserId == null && b.DueDate == null)
+            {
+                b.UserId = userId;
+                b.DueDate = dueDate;
+                rentedBooks.Add(b);
+            }
+        });
+        await _context.SaveChangesAsync();
+        return rentedBooks;
+    }
+    public async Task<bool> ReturnBook(Guid bookId)
+    {
+        var book = await _context.Books.FindAsync(bookId);
+        if(book is null)
+        {
+            return false;
+        }
+        book.DueDate = null;
+        book.UserId = null;
+        book.User = null;
+
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

@@ -14,6 +14,7 @@ namespace LibraryAPI.Models
         public string Publisher { get; set; } = string.Empty;
         public List<Category> Categories { get; set; } = new List<Category>();
         public DateTime PublishedDate { get; set; }
+        public DateTime? DueDate { get; set; }
         public int Pages { get; set; }
         public Guid? UserId { get; set;}
         public User? User { get; set; }

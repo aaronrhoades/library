@@ -3,6 +3,7 @@
         @for(cartItem of cartService.cart(); track cartItem.id) {
             <app-cart-item [cartItem]="cartItem"></app-cart-item>
         }
+        <button class="btn btn-success mb-5" (click)="checkout()">Checkout</button>
     }
     @else {
         <p>Your cart is empty. <a routerLink="/books">View books</a> to add books to your cart.</p>

@@ -21,4 +21,7 @@ export class Cart implements OnInit{
       next: value => this.cart.set(value)
     });
   }
+  checkout() {
+    this.cartService.checkout().subscribe();
+  }
 }

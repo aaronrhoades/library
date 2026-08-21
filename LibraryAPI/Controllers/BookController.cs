@@ -2,6 +2,7 @@ using LibraryAPI.Services;
 using LibraryAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace LibraryAPI.Controllers;
 
@@ -11,9 +12,11 @@ namespace LibraryAPI.Controllers;
 public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
-    public BookController(IBookService bookService)
+    private readonly UserManager<User> _userManager;
+    public BookController(IBookService bookService, UserManager<User> userManager)
     {
         _bookService = bookService;
+        _userManager = userManager;
     }
     [Authorize(Roles = "Librarian,Customer")]
     [HttpGet("search", Name = "SearchBooks")]
@@ -72,5 +75,36 @@ public class BookController : ControllerBase
     {
         await _bookService.DeleteBookAsync(id);
         return NoContent();
+    }
+
+    [Authorize(Roles = "Customer")]
+    [HttpPatch("rent")]
+    
+    public async Task<ActionResult> RentBooks(Guid[] bookIds)
+    {   
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return BadRequest("User not found");
+        }
+        var result = await this._bookService.RentBooks(bookIds, user.Id);
+
+        if(result is null || result.Count == 0)
+        {
+            return BadRequest("Books were not rented");
+        }
+
+        return Ok(result);
+    }
+    [Authorize(Roles = "Librarian")]
+    [HttpPatch("return")]
+    public async Task<ActionResult> ReturnBook(Guid bookId)
+    {
+        var result = await this._bookService.ReturnBook(bookId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+        return Ok(result);
     }
 }
