@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IRole } from '@models/iRole';
 import { IRoleAssignment } from '@models/iRoleAssignment';
+import { CartService } from '../cart/cart-service';
 
 export interface UserProfile {
   email: string;
@@ -25,6 +26,7 @@ interface LoginResponse {
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private cartService = inject(CartService);
   private apiUrl = environment.apiUrl;
   // 1. Tracks profile data, never the raw token string
   private tokenSignal = signal<LoginResponse | null>(null);
@@ -78,6 +80,7 @@ export class AuthService {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('expire_time');
+    this.cartService.clearCart();
     this.userProfile.set(null);
     this.tokenSignal.set(null);
     this.router.navigate(['/']);

@@ -9,10 +9,12 @@
             <p>Published: {{ book()?.publishedDate | date:'M/dd/yyyy' }}</p>
             <p>Categories: {{ categories()?.join(', ') }}</p>
             <button (click)="onViewDetails()" class="btn btn-primary">View Details</button>
-            <button (click)="addToCart()" class="btn btn-success ms-3" 
-                [disabled]="(!book().isAvailable || cartService.isInCart(book()))">
-                Add to Cart
-            </button>
+            @if(!!authService.userRoles()?.find(r => r ==='Customer')) {
+                <button (click)="addToCart()" class="btn btn-success ms-3" 
+                    [disabled]="(!book().isAvailable || cartService.isInCart(book()))">
+                    Add to Cart
+                </button>
+            }
         </div>
     </div>
 </div>

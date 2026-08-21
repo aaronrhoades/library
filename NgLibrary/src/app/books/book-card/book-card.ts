@@ -3,6 +3,7 @@ import { Component, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IBook } from '@models/iBook';
 import { CartService } from '../../cart/cart-service';
+import { AuthService } from '../../auth/auth-service';
 
 @Component({
   imports: [DatePipe],
@@ -13,6 +14,7 @@ import { CartService } from '../../cart/cart-service';
 export class BookCard {
   book = input.required<IBook>();
   router = inject(Router);
+  authService = inject(AuthService);
   cartService = inject(CartService);
   categories = signal<string[]>([]);
   ngOnInit() {
