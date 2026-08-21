@@ -1,7 +1,14 @@
 <div class="card my-5 p-4">
-    <h1>{{ book()?.title }}</h1>
-    <p>Author: {{ book()?.author }}</p>
-    <p>Published: {{ book()?.publishedDate | date:'M/dd/yyyy' }}</p>
-    <p>Categories: {{ categories()?.join(', ') }}</p>
-    <button (click)="onViewDetails()" class="btn btn-primary">View Details</button>
+    <div class="row">
+        <div class="col-md-3">
+            <img [src]="book()?.imageUrl" class="mw-100 h-auto">
+        </div>
+        <div class="col-md-9">
+            <h1>{{ book()?.title }}</h1>
+            <p>Author: {{ book()?.author }}</p>
+            <p>Published: {{ book()?.publishedDate | date:'M/dd/yyyy' }}</p>
+            <p>Categories: {{ categories()?.join(', ') }}</p>
+            <button (click)="onViewDetails()" class="btn btn-primary">View Details</button>
+        </div>
+    </div>
 </div>

@@ -6,6 +6,7 @@ import { RouterLink } from "@angular/router";
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { AuthService } from '../../auth/auth-service';
 interface SearchTerm {
   title: string
 }
@@ -16,6 +17,7 @@ interface SearchTerm {
   templateUrl: './book-list.html',
 })
 export class BookList implements OnInit, OnChanges {
+  authService = inject(AuthService);
   searchModel = signal<SearchTerm>({title: ''});
   searchForm = form(this.searchModel, (config) => {
     debounce(config.title, 300)

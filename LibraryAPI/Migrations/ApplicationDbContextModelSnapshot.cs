@@ -148,6 +148,10 @@ namespace LibraryAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Pages")
                         .HasColumnType("int");
 
@@ -162,7 +166,12 @@ namespace LibraryAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Books");
 
@@ -172,6 +181,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("8621b186-53e7-4b29-8cce-e45547a1002c"),
                             Author = "F. Scott Fitzgerald",
                             ISBN = "9780743273565",
+                            ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 218,
                             PublishedDate = new DateTime(1925, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -182,6 +192,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("0f5c9dc1-8be2-428f-872d-ef4bfbc1973a"),
                             Author = "Harper Lee",
                             ISBN = "9780446310789",
+                            ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 281,
                             PublishedDate = new DateTime(1960, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -192,6 +203,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("86bd2e93-ce71-4a88-b4f6-0cea87305770"),
                             Author = "George Orwell",
                             ISBN = "9780451524935",
+                            ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 328,
                             PublishedDate = new DateTime(1948, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -202,6 +214,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("7a4092bc-deb9-41b7-beff-41fdb9e16c50"),
                             Author = "J.R.R. Tolkien",
                             ISBN = "9780547928227",
+                            ImageUrl = "https://images.unsplash.com/photo-1627686973009-0de79c0c3f6b?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 310,
                             PublishedDate = new DateTime(1937, 9, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -212,6 +225,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("501b3c1d-e978-421d-927a-65db19080ec2"),
                             Author = "Jane Austen",
                             ISBN = "9780141439518",
+                            ImageUrl = "https://images.unsplash.com/photo-1573125716783-d05b57a86488?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 279,
                             PublishedDate = new DateTime(1813, 1, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -222,6 +236,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("078776f0-aa1f-4f3a-bce4-3487c0d2d1d1"),
                             Author = "J.D. Salinger",
                             ISBN = "9780316769488",
+                            ImageUrl = "https://images.unsplash.com/photo-1734089915382-4dac343329d2?q=80&w=2610&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 278,
                             PublishedDate = new DateTime(1951, 7, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -232,6 +247,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("1be21cd7-b025-4593-8180-9e47af9b9117"),
                             Author = "Dan Brown",
                             ISBN = "9780307474278",
+                            ImageUrl = "https://images.unsplash.com/photo-1615413833480-6e8427dbcc5e?q=80&w=772&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 689,
                             PublishedDate = new DateTime(2003, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -242,6 +258,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("664c8f23-0ee5-45d2-b2c4-8ab2845c4036"),
                             Author = "Paulo Coelho",
                             ISBN = "9780061122415",
+                            ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 208,
                             PublishedDate = new DateTime(1988, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -252,6 +269,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("7d460ffd-0a2e-4b4c-a19b-c36b32c15ada"),
                             Author = "J.R.R. Tolkien",
                             ISBN = "9780544003415",
+                            ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 1216,
                             PublishedDate = new DateTime(1954, 7, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -262,6 +280,7 @@ namespace LibraryAPI.Migrations
                             Id = new Guid("797a8868-b35b-4af4-b63d-6183e51e664e"),
                             Author = "C.S. Lewis",
                             ISBN = "9780066238500",
+                            ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                             Pages = 767,
                             PublishedDate = new DateTime(1950, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Publisher = "",
@@ -559,6 +578,16 @@ namespace LibraryAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LibraryAPI.Models.Book", b =>
+                {
+                    b.HasOne("LibraryAPI.Models.User", "User")
+                        .WithMany("books")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -608,6 +637,11 @@ namespace LibraryAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LibraryAPI.Models.User", b =>
+                {
+                    b.Navigation("books");
                 });
 #pragma warning restore 612, 618
         }

@@ -57,12 +57,18 @@ public class BookService : IBookService
             return false;
         }
 
+        var existingUserId = existingBook.UserId;
+
         existingBook.Title = book.Title;
         existingBook.Author = book.Author;
         existingBook.ISBN = book.ISBN;
         existingBook.Publisher = book.Publisher;
         existingBook.PublishedDate = book.PublishedDate;
         existingBook.Pages = book.Pages;
+        existingBook.ImageUrl = book.ImageUrl;
+
+        // do not overwrite renter from form payload
+        existingBook.UserId = existingUserId;
 
         var categoryIds = book.Categories
             .Select(category => category.Id)

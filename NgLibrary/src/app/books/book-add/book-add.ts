@@ -11,6 +11,7 @@ interface IBookForm {
   author: string;
   title: string;
   publishedDate: string;
+  imageUrl: string;
   isbn: string;
   publisher: string;
   categoryIds: string[];
@@ -36,6 +37,7 @@ export class BookAdd implements OnInit {
   bookAddModel = signal<IBookForm>({
     author: '',
     title: '',
+    imageUrl: '',
     publishedDate: this.toDateInputValue(new Date()),
     isbn: '',
     publisher: '',
@@ -73,12 +75,14 @@ export class BookAdd implements OnInit {
         const updatedBook: IBook = {
           id: this.id() as string,
           title: bookFormValue.title,
+          imageUrl: bookFormValue.imageUrl,
           author: bookFormValue.author,
           publishedDate: new Date(`${bookFormValue.publishedDate}T00:00:00`),
           isbn: bookFormValue.isbn,
           publisher: bookFormValue.publisher,
           categories: this.selectedCategories() || [],
-          pages: bookFormValue.pages
+          pages: bookFormValue.pages,
+
         }
 
         saveBook$ = this.bookService.updateBook(updatedBook);
@@ -87,12 +91,14 @@ export class BookAdd implements OnInit {
 
         const newBook: Omit<IBook, 'id'> = {
           title: bookFormValue.title,
+          imageUrl: bookFormValue.imageUrl,
           author: bookFormValue.author,
           publishedDate: new Date(`${bookFormValue.publishedDate}T00:00:00`),
           isbn: bookFormValue.isbn,
           publisher: bookFormValue.publisher,
           categories: this.selectedCategories() || [],
-          pages: bookFormValue.pages
+          userId: null,
+          pages: bookFormValue.pages,
         }
 
         saveBook$ = this.bookService.saveBook(newBook)
@@ -114,6 +120,7 @@ export class BookAdd implements OnInit {
     return {
       author: book.author,
       title: book.title,
+      imageUrl: book.imageUrl,
       publishedDate: this.toDateInputValue(book.publishedDate),
       isbn: book.isbn,
       publisher: book.publisher,
