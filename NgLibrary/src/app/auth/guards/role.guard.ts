@@ -10,7 +10,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
 
     // 1. First ensure they are authenticated at all
     if (!authService.isAuthenticated()) {
-      return router.createUrlTree(['/login']);
+      return router.createUrlTree(['/books']);
     }
 
     // 2. Check if the user's roles signal matches any of the route's allowed roles
@@ -20,8 +20,10 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     if (hasRole) {
       return true;
     }
-
-    // Redirect to an unauthorized landing page or home page if access is denied
-    return router.createUrlTree(['/role-assignment']);
+    if(authService.userRoles() == null || authService.userRoles()?.length === 0) {
+      return router.createUrlTree(['/role-assignment']);
+    } else {
+      return router.createUrlTree(['/unauthorized'])
+    }
   };
 };

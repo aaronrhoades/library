@@ -36,6 +36,14 @@ export const routes: Routes = [
         path: 'role-assignment',
         loadComponent: () => import('./auth/role-assignment/role-assignment').then(c => c.RoleAssignment),
         canActivate: [authGuard]
+    },
+    {
+        path: 'unauthorized',
+        loadComponent: () => import('./unauthorized/unauthorized').then(c => c.Unauthorized)
+    },
+    {
+        path: '**',
+        loadComponent: () => import('./error404/error404').then(c => c.Error404)
     }
 
 ];

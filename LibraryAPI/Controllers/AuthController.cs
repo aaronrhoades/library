@@ -1,7 +1,9 @@
+using LibraryAPI.Data;
 using LibraryAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace YourApi.Controllers;
@@ -12,11 +14,12 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-
-    public AuthController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    private readonly ApplicationDbContext _context;
+    public AuthController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager, ApplicationDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _context = context;
     }
 
     [Authorize] // 🔒 Rejects the request immediately if the HttpOnly cookie is missing or invalid
@@ -40,6 +43,21 @@ public class AuthController : ControllerBase
             UserName = username
         });
     }
+    [Authorize]
+    [HttpGet("role")]
+    public async Task<IActionResult> GetAllRoles()
+    {
+        var roles = await _context.Roles
+            .Select(r => new
+            {
+                Id = r.Id,
+                Name = r.Name
+            })
+            .ToListAsync();
+
+        return Ok(roles);
+    }
+
     [Authorize]
     [HttpPost("assign-role")]
     public async Task<IActionResult> AssignRoleAsync([FromBody] UserRoleRequest request)

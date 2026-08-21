@@ -5,6 +5,8 @@ import { environment } from '@environments/environment';
 import { ILogin } from '@models/iLogin';
 import { Router } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { IRole } from '@models/iRole';
+import { IRoleAssignment } from '@models/iRoleAssignment';
 
 export interface UserProfile {
   email: string;
@@ -18,6 +20,7 @@ interface LoginResponse {
   refreshToken: string
   tokenType: string;
 }
+
 @Service()
 export class AuthService {
   private http = inject(HttpClient);
@@ -28,6 +31,7 @@ export class AuthService {
   private isLoggedIn$ = toObservable(this.tokenSignal).pipe(map(token => !!token));
   private userProfile = signal<UserProfile | null>(null);
   readonly userRoles = computed(() => this.userProfile()?.roles);
+  readonly userEmail = computed(() => this.userProfile()?.email);
   readonly isAuthenticated = computed(() => this.tokenSignal() !== null);
 
   // 2. Run on app initialization to check if a valid cookie already exists
@@ -92,5 +96,13 @@ export class AuthService {
 
   isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$;
+  }
+
+  getAllRoles(): Observable<IRole[]> {
+    return this.http.get<IRole[]>(`${this.apiUrl}/auth/role`);
+  }
+
+  assignRole(roleAssignment: IRoleAssignment): Observable<unknown>{
+    return this.http.post(`${this.apiUrl}/auth/assign-role`, roleAssignment);
   }
 }

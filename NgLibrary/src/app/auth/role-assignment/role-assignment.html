@@ -1,8 +1,17 @@
 <div class="container">
-    <div class="my-3">
-        <label for="roleSelection" class="form-label">Select a Role</label>
-        <select name="" id="">
-            
-        </select>
-    </div>
+    <form>
+        <div class="my-3">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" [formField]="roleAssignmentForm.email">
+        </div>
+        <div class="my-3">
+            <label for="roleSelection" class="form-label">Select a Role</label>
+            <select id="roleSelection" class="form-select" [formField]="roleAssignmentForm.role">
+                @for(role of roles(); track role.id) {
+                    <option [value]="role.id">{{ role.name }}</option>
+                }
+            </select>
+        </div>
+        <button class="btn btn-primary" (click)="selectRole($event)">Select</button>
+    </form>   
 </div>
