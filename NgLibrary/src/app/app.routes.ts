@@ -38,6 +38,11 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard(['Customer'])]
     },
     {
+        path: 'return-rentals',
+        loadComponent: () => import('./return-rentals/return-rentals/return-rentals').then(c => c.ReturnRentals),
+        canActivate: [authGuard, roleGuard(['Librarian'])]
+    },
+    {
         path: 'role-assignment',
         loadComponent: () => import('./auth/role-assignment/role-assignment').then(c => c.RoleAssignment),
         canActivate: [authGuard]

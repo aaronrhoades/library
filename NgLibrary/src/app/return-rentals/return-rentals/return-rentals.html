@@ -1,0 +1,13 @@
+<div class="container">
+    @if(rentalsByUser().length > 0)
+    {
+        @for(rentalByUser of rentalsByUser(); track rentalByUser.email) {
+            <h1>{{rentalByUser?.email}} ({{rentalByUser.rentals.length}})</h1>
+            @for(rental of rentalByUser.rentals; track rental.id) {
+                <app-return-rental-item [rental]="rental" (returnRental)="returnBook($event)"></app-return-rental-item>
+            }
+        }
+    } @else {
+        <p>There are no outstanding rentals.</p>
+    }
+</div>

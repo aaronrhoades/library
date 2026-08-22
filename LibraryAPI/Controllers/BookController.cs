@@ -87,7 +87,7 @@ public class BookController : ControllerBase
         {
             return BadRequest("User not found");
         }
-        var result = await this._bookService.RentBooks(bookIds, user.Id);
+        var result = await this._bookService.RentBooksAsync(bookIds, user.Id);
 
         if(result is null || result.Count == 0)
         {
@@ -98,13 +98,21 @@ public class BookController : ControllerBase
     }
     [Authorize(Roles = "Librarian")]
     [HttpPatch("return")]
-    public async Task<ActionResult> ReturnBook(Guid bookId)
+    public async Task<ActionResult> ReturnBook([FromQuery] Guid bookId)
     {
-        var result = await this._bookService.ReturnBook(bookId);
+        var result = await this._bookService.ReturnBookAsync(bookId);
         if (!result)
         {
             return BadRequest();
         }
         return Ok(result);
+    }
+    [Authorize(Roles ="Librarian")]
+    [HttpGet("rentals-by-user")]
+    public async Task<ActionResult> GetRentalsGroupByUser()
+    {
+        List<UserRentalGroupDto> booksByUserId = await _bookService.GetRentalsGroupByUserAsync();
+
+        return Ok(booksByUserId);
     }
 }

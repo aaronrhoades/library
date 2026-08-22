@@ -11,9 +11,10 @@ public interface IBookService
     Task AddBookAsync(Book book);
     Task<bool> UpdateBookAsync(Book book);
     Task DeleteBookAsync(Guid id);
-    Task<List<Book>?> RentBooks(Guid[] bookIds, Guid userId);
+    Task<List<Book>?> RentBooksAsync(Guid[] bookIds, Guid userId);
 
-    Task<bool> ReturnBook(Guid bookId);
+    Task<bool> ReturnBookAsync(Guid bookId);
+    Task<List<UserRentalGroupDto>> GetRentalsGroupByUserAsync();
 }
 public class BookService : IBookService
 {
@@ -100,7 +101,7 @@ public class BookService : IBookService
             await _context.SaveChangesAsync();
         }
     }
-    public async Task<List<Book>?> RentBooks(Guid[] bookIds, Guid userId)
+    public async Task<List<Book>?> RentBooksAsync(Guid[] bookIds, Guid userId)
     {
         
         var user = await _context.Users.FindAsync(userId);
@@ -127,7 +128,7 @@ public class BookService : IBookService
         await _context.SaveChangesAsync();
         return rentedBooks;
     }
-    public async Task<bool> ReturnBook(Guid bookId)
+    public async Task<bool> ReturnBookAsync(Guid bookId)
     {
         var book = await _context.Books.FindAsync(bookId);
         if(book is null)
@@ -141,5 +142,22 @@ public class BookService : IBookService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+    public async Task<List<UserRentalGroupDto>> GetRentalsGroupByUserAsync()
+    {
+        return await _context.Books
+            .Where(book => book.UserId != null)
+            .GroupBy(book => new
+            {
+                UserId = book.UserId!.Value,
+                Email = book.User!.Email!
+            })
+            .Select(group => new UserRentalGroupDto
+            {
+                UserId = group.Key.UserId,
+                Email = group.Key.Email,
+                Rentals = group.ToList()
+            })
+            .ToListAsync();
     }
 }

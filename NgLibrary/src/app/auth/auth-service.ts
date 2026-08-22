@@ -42,7 +42,9 @@ export class AuthService {
     if (storedToken) {
       this.tokenSignal.set(storedToken);
     }
-
+    if(!storedToken) {
+      return of(null);
+    }
     return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`).pipe(
       tap(userProfile => {
         if(!!userProfile) {
@@ -62,10 +64,9 @@ export class AuthService {
   }
 
   login(credentials: ILogin): Observable<UserProfile | null> {
-    // The backend sets the HttpOnly cookie in the response headers
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(user => {
-        const expireTime = new Date(Date.now() + user.expiresIn);
+        const expireTime = new Date(Date.now() + user.expiresIn * 1000);
         localStorage.setItem('auth_token', user.accessToken);
         localStorage.setItem('refresh_token', user.refreshToken);
         localStorage.setItem('expire_time', expireTime.toISOString());
@@ -91,7 +92,7 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
       tap(response => {
         this.tokenSignal.set(response);
-        const expiresAt = new Date(Date.now() + response.expiresIn).toISOString();
+        const expiresAt = new Date(Date.now() + response.expiresIn * 1000).toISOString();
         localStorage.setItem('auth_token', response.accessToken);
         localStorage.setItem('refresh_token', response.refreshToken);
         localStorage.setItem('expire_time', expiresAt);

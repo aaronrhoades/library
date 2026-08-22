@@ -1,0 +1,6 @@
+<h2>
+    {{rental().title}}
+</h2>
+<p>ISBN {{rental().isbn}}</p>
+<p>Due Date: {{rental().dueDate | date:'M/d/yyyy'}}</p>
+<button class="btn btn-primary" (click)="returnBook(rental().id)">Return</button>

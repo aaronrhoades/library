@@ -9,6 +9,7 @@ export interface IBook {
     publisher: string;
     categories: ICategory[];
     publishedDate: Date;
+    dueDate?: Date;
     pages: number;
     userId?: string | null;
     isAvailable?: boolean;
