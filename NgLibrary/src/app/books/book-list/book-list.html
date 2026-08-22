@@ -1,12 +1,54 @@
 <div class="container">
+  <h1>All Books</h1>
   @if(!!authService.userRoles()?.find(x=>x === 'Librarian')) {
     <button routerLink="/book/add" class="btn btn-primary">Add Book</button>
   }
   <form class="my-5">
     <input class="form-control" placeholder="Type to search..." [formField]="searchForm.title">
   </form>
+    <table class="table">
+      <thead>
 
-  @for(book of books(); track book.id) {
-    <app-book-card [book]="book"></app-book-card>
-  }
+        <tr>
+          <th>Title</th>
+          <th>Info</th>
+          <th>Available</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        @for(book of books(); track book.id) {
+          <tr class="align-middle">
+            <td>
+              <img [src]="book.imageUrl" class="coverImgSmall">
+              <h4>
+                {{book.title}}
+              </h4>
+            </td>
+            <td>
+              Author: {{book.author}}<br>
+              Publisher: {{book.publisher}}<br>
+              Categories: {{book.categories.map(x => x.name).join(', ')}}<br>
+            </td>
+            <td>{{book.isAvailable ? "Available" : "Not Available"}}</td>
+            <td>
+              <button class="btn btn-primary btn-sm" (click)="viewBookDetails(book.id)">View Details</button>
+              @if(authService.userRoles()?.some(x => x === 'Customer'))
+              {
+                <button (click)="addBookToCart(book)" class="btn btn-success btn-sm ms-3" [disabled]="(!book.isAvailable || cartService.isInCart(book))">Add to Cart</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if(books()?.length === 0) {
+      <p>There are no books that match your search.</p>
+    }
+</div>
+<div class="container">
+  <hr>
+  <h1 class="mt-5">Featured Books</h1>
+  <app-featured-books></app-featured-books>
 </div>

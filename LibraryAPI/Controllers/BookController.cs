@@ -27,6 +27,15 @@ public class BookController : ControllerBase
         return Ok(books);
     }
     [Authorize(Roles = "Librarian,Customer")]
+    [HttpGet("featured", Name = "FeaturedBooks")]
+    public async Task<ActionResult<IEnumerable<Book>>> FeaturedBooks()
+    {
+        var books = await _bookService.GetFeaturedBooksAsync();
+
+        return Ok(books);
+    }
+    
+    [Authorize(Roles = "Librarian,Customer")]
     [HttpGet(Name = "GetBooks")]
     public async Task<ActionResult<IEnumerable<Book>>> Get()
     {

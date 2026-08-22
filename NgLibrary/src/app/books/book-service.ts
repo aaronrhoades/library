@@ -16,6 +16,9 @@ export class BookService {
     getAllBooks() : Observable<IBook[]> {
         return this.http.get<IBook[]>(`${environment.apiUrl}/book`);
     }
+    getFeaturedBooks() : Observable<IBook[]> {
+        return this.http.get<IBook[]>(`${environment.apiUrl}/book/featured`);
+    }
     getBookById(id: string) : Observable<IBook> {
         return this.http.get<IBook>(`${environment.apiUrl}/book/${id}`);
     }

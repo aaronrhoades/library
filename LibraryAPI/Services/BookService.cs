@@ -7,6 +7,7 @@ public interface IBookService
 {
     Task<List<Book>> SearchBooksAsync(string searchTerm);
     Task<List<Book>> GetAllBooksAsync();
+    Task<List<Book>> GetFeaturedBooksAsync();
     Task<Book?> GetBookByIdAsync(Guid id);
     Task AddBookAsync(Book book);
     Task<bool> UpdateBookAsync(Book book);
@@ -33,7 +34,14 @@ public class BookService : IBookService
     {
         return await _context.Books.Include(b => b.Categories).ToListAsync();
     }
-
+    public async Task<List<Book>> GetFeaturedBooksAsync()
+    {
+        return await _context.Books
+            .Include(book => book.Categories)
+            .OrderBy(book => Guid.NewGuid())
+            .Take(5)
+            .ToListAsync();
+    }
     public async Task<Book?> GetBookByIdAsync(Guid id)
     {
         return await _context.Books.Include(b => b.Categories).FirstOrDefaultAsync(b => b.Id == id);

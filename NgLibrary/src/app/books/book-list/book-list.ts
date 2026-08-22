@@ -2,22 +2,26 @@ import { Component, computed, DestroyRef, inject, OnChanges, OnInit, signal } fr
 import { BookService } from '../book-service';
 import { IBook } from '@models/iBook';
 import { BookCard } from '../book-card/book-card';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { AuthService } from '../../auth/auth-service';
+import { CartService } from '../../cart/cart-service';
+import { FeaturedBooks } from "../featured-books/featured-books";
 interface SearchTerm {
   title: string
 }
 @Component({
-  imports: [BookCard, RouterLink, FormField],
+  imports: [RouterLink, FormField, FeaturedBooks],
   selector: 'app-book-list',
   styleUrl: './book-list.scss',
   templateUrl: './book-list.html',
 })
 export class BookList implements OnInit, OnChanges {
   authService = inject(AuthService);
+  cartService = inject(CartService);
+  router = inject(Router);
   searchModel = signal<SearchTerm>({title: ''});
   searchForm = form(this.searchModel, (config) => {
     debounce(config.title, 300)
@@ -46,7 +50,12 @@ export class BookList implements OnInit, OnChanges {
   ngOnChanges(changes: any) {
     console.log(changes);
   }
-
+  viewBookDetails(bookId: string) {
+    this.router.navigate(['/book', bookId]);
+  }
+  addBookToCart(book: IBook) {
+    this.cartService.addToCart(book);
+  }
   getAndSetAllBooks() {
     this.bookService.getAllBooks().subscribe(books => {
       this.books.set(books);
