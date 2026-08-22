@@ -1,63 +1,125 @@
-import { Component, computed, DestroyRef, inject, OnChanges, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { BookService } from '../book-service';
 import { IBook } from '@models/iBook';
-import { BookCard } from '../book-card/book-card';
-import { Router, RouterLink } from "@angular/router";
+import { IBookSearchFilter } from '@models/iBookSearchFilter';
+import { Router, RouterLink } from '@angular/router';
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, switchMap } from 'rxjs';
 import { AuthService } from '../../auth/auth-service';
 import { CartService } from '../../cart/cart-service';
-import { FeaturedBooks } from "../featured-books/featured-books";
-interface SearchTerm {
-  title: string
+import { FeaturedBooks } from '../featured-books/featured-books';
+
+type SortField = 'Title' | 'Author';
+type SortDirection = 'asc' | 'desc';
+
+interface BookSearchFilterForm {
+  title: string;
+  author: string;
+  available: string;
+  sortBy?: SortField;
+  sortDirection?: SortDirection;
 }
+
 @Component({
   imports: [RouterLink, FormField, FeaturedBooks],
   selector: 'app-book-list',
   styleUrl: './book-list.scss',
   templateUrl: './book-list.html',
 })
-export class BookList implements OnInit, OnChanges {
+export class BookList implements OnInit {
   authService = inject(AuthService);
   cartService = inject(CartService);
   router = inject(Router);
-  searchModel = signal<SearchTerm>({title: ''});
-  searchForm = form(this.searchModel, (config) => {
-    debounce(config.title, 300)
-  });
-  debouncedQuery = computed(() => this.searchForm().value().title);
-  debouncedQuery$ = toObservable(this.debouncedQuery);
-
   private bookService = inject(BookService);
   private destroyRef = inject(DestroyRef);
+
   public books = signal<IBook[] | null>(null);
+
+  searchModel = signal<BookSearchFilterForm>({
+    title: '',
+    author: '',
+    available: '',
+    sortBy: 'Title',
+    sortDirection: 'asc',
+  });
+
+  searchForm = form(this.searchModel, (schema) => {
+    debounce(schema.title, 300),
+      debounce(schema.author, 300),
+      debounce(schema.available, 300)
+  });
+
+  debouncedQuery = computed(() => this.searchForm().value());
+  debouncedQuery$ = toObservable(this.debouncedQuery);
+
   ngOnInit(): void {
     this.getAndSetAllBooks();
-    
-   
-    this.debouncedQuery$.pipe(
-      distinctUntilChanged(),
-      tap(() => console.log('tap')),
-      switchMap(val => val === '' ? this.bookService.getAllBooks() : this.bookService.searchBooks(val)),
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe({
-      next: books => this.books.set(books),
-      complete: () => console.log('Observable completed')
-    })
+
+    this.debouncedQuery$
+      .pipe(
+        distinctUntilChanged((prev, curr) =>
+          prev.title === curr.title &&
+          prev.author === curr.author &&
+          prev.available === curr.available &&
+          prev.sortBy === curr.sortBy &&
+          prev.sortDirection === curr.sortDirection),
+        switchMap(() => {
+          const formValue = this.searchForm().value();
+          const rawAvailable = formValue.available;
+          const available = rawAvailable === '' ? undefined : rawAvailable === 'true';
+
+          const filter: IBookSearchFilter = {
+            title: formValue.title?.trim() || undefined,
+            author: formValue.author?.trim() || undefined,
+            available,
+            sortBy: formValue.sortBy ?? 'Title',
+            sortDirection: formValue.sortDirection ?? 'asc',
+          };
+
+          return this.bookService.searchBooks(filter);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: books => this.books.set(books),
+      });
   }
-  ngOnChanges(changes: any) {
-    console.log(changes);
+
+  toggleSort(column: SortField): void {
+    const current = this.searchModel();
+
+    const isSameColumn = current.sortBy === column;
+    const nextDirection: SortDirection = isSameColumn
+      ? (current.sortDirection === 'asc' ? 'desc' : 'asc')
+      : 'asc';
+
+    this.searchModel.set({
+      ...current,
+      sortBy: column,
+      sortDirection: nextDirection,
+    });
   }
-  viewBookDetails(bookId: string) {
+
+  sortIndicator(column: SortField): string {
+    const current = this.searchModel();
+    if (current.sortBy !== column) return '';
+    return current.sortDirection === 'asc' ? '↑' : '↓';
+  }
+
+  viewBookDetails(bookId: string): void {
     this.router.navigate(['/book', bookId]);
   }
-  addBookToCart(book: IBook) {
+
+  addBookToCart(book: IBook): void {
     this.cartService.addToCart(book);
   }
-  getAndSetAllBooks() {
-    this.bookService.getAllBooks().subscribe(books => {
+
+  getAndSetAllBooks(): void {
+    this.bookService.searchBooks({
+      sortBy: 'Title',
+      sortDirection: 'asc',
+    }).subscribe(books => {
       this.books.set(books);
     });
   }

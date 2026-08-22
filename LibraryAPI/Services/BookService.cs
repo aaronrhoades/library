@@ -1,11 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using LibraryAPI.Data;
 using LibraryAPI.Models;
-using Microsoft.EntityFrameworkCore;
+using LibraryAPI.Models.Filters;
+using LibraryAPI.DTO;
 
 namespace LibraryAPI.Services;
 public interface IBookService
 {
-    Task<List<Book>> SearchBooksAsync(string searchTerm);
+    Task<List<Book>> SearchBooksAsync(BookSearchFilter filter);
     Task<List<Book>> GetAllBooksAsync();
     Task<List<Book>> GetFeaturedBooksAsync();
     Task<Book?> GetBookByIdAsync(Guid id);
@@ -25,9 +27,50 @@ public class BookService : IBookService
     {
         _context = context;
     }
-    public async Task<List<Book>> SearchBooksAsync(string searchTerm)
+    public async Task<List<Book>> SearchBooksAsync(BookSearchFilter filter)
     {
-        return await _context.Books.Where(book => book.Title.Contains(searchTerm)).ToListAsync();
+        var query = _context.Books
+            .Include(book => book.Categories)
+            .AsQueryable();
+
+        if (filter is null)
+        {
+            return await query.OrderBy(book => book.Title).ToListAsync();
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Title))
+        {
+            var title = filter.Title.Trim();
+            query = query.Where(book => book.Title.Contains(title));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Author))
+        {
+            var author = filter.Author.Trim();
+            query = query.Where(book => book.Author.Contains(author));
+        }
+
+        if (filter.Available.HasValue)
+        {
+            query = filter.Available.Value
+                ? query.Where(book => book.UserId == null)
+                : query.Where(book => book.UserId != null);
+        }
+
+        var sortBy = (filter.SortBy ?? "Title").Trim();
+        var sortDirection = (filter.SortDirection ?? "asc").Trim().ToLowerInvariant();
+
+        query = sortBy switch
+        {
+            "Author" => sortDirection == "desc"
+                ? query.OrderByDescending(book => book.Author)
+                : query.OrderBy(book => book.Author),
+            _ => sortDirection == "desc"
+                ? query.OrderByDescending(book => book.Title)
+                : query.OrderBy(book => book.Title)
+        };
+
+        return await query.ToListAsync();
     }
 
     public async Task<List<Book>> GetAllBooksAsync()

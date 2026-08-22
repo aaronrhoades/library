@@ -1,8 +1,10 @@
 using LibraryAPI.Services;
 using LibraryAPI.Models;
+using LibraryAPI.Models.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using LibraryAPI.DTO;
 
 namespace LibraryAPI.Controllers;
 
@@ -20,10 +22,9 @@ public class BookController : ControllerBase
     }
     [Authorize(Roles = "Librarian,Customer")]
     [HttpGet("search", Name = "SearchBooks")]
-    public async Task<ActionResult<IEnumerable<Book>>> Search([FromQuery] string searchTerm)
+    public async Task<ActionResult<IEnumerable<Book>>> Search([FromQuery] BookSearchFilter filter)
     {
-        var books = await _bookService.SearchBooksAsync(searchTerm);
-
+        var books = await _bookService.SearchBooksAsync(filter);
         return Ok(books);
     }
     [Authorize(Roles = "Librarian,Customer")]
