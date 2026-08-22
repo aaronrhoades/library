@@ -8,6 +8,7 @@
             <p>Author: {{ book()?.author }}</p>
             <p>Published: {{ book()?.publishedDate | date:'M/dd/yyyy' }}</p>
             <p>Categories: {{ categories()?.join(', ') }}</p>
+            <p>Description: {{book()?.description}}</p>
             <button (click)="onViewDetails()" class="btn btn-primary">View Details</button>
             @if(!!authService.userRoles()?.find(r => r ==='Customer')) {
                 <button (click)="addToCart()" class="btn btn-success ms-3" 

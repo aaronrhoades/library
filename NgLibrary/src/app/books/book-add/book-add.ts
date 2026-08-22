@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 interface IBookForm {
   author: string;
   title: string;
+  description: string;
   publishedDate: string;
   imageUrl: string;
   isbn: string;
@@ -37,6 +38,7 @@ export class BookAdd implements OnInit {
   bookAddModel = signal<IBookForm>({
     author: '',
     title: '',
+    description: '',
     imageUrl: '',
     publishedDate: this.toDateInputValue(new Date()),
     isbn: '',
@@ -75,6 +77,7 @@ export class BookAdd implements OnInit {
         const updatedBook: IBook = {
           id: this.id() as string,
           title: bookFormValue.title,
+          description: bookFormValue.description,
           imageUrl: bookFormValue.imageUrl,
           author: bookFormValue.author,
           publishedDate: new Date(`${bookFormValue.publishedDate}T00:00:00`),
@@ -91,6 +94,7 @@ export class BookAdd implements OnInit {
 
         const newBook: Omit<IBook, 'id'> = {
           title: bookFormValue.title,
+          description: bookFormValue.description,
           imageUrl: bookFormValue.imageUrl,
           author: bookFormValue.author,
           publishedDate: new Date(`${bookFormValue.publishedDate}T00:00:00`),
@@ -120,6 +124,7 @@ export class BookAdd implements OnInit {
     return {
       author: book.author,
       title: book.title,
+      description: book.description,
       imageUrl: book.imageUrl,
       publishedDate: this.toDateInputValue(book.publishedDate),
       isbn: book.isbn,

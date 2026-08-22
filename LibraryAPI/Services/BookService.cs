@@ -73,6 +73,7 @@ public class BookService : IBookService
 
         existingBook.Title = book.Title;
         existingBook.Author = book.Author;
+        existingBook.Description = book.Description;
         existingBook.ISBN = book.ISBN;
         existingBook.Publisher = book.Publisher;
         existingBook.PublishedDate = book.PublishedDate;

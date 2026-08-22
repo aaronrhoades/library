@@ -12,6 +12,10 @@
             <label for="title" class="form-label">Title</label>
             <input type="text" id="title" [formField]="bookAddForm.title" class="form-control">
         </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" [formField]="bookAddForm.description" class="form-control"></textarea>
+        </div>
         <div>
             <label for="imageUrl">Image URL</label>
             <input type="text" id="imageUrl" [formField]="bookAddForm.imageUrl" class="form-control">

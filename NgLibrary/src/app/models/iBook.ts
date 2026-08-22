@@ -3,6 +3,7 @@ import { ICategory } from './iCategory';
 export interface IBook {
     id: string;
     title: string;
+    description: string;
     imageUrl: string;
     author: string;
     isbn: string;

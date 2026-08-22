@@ -23,14 +23,14 @@ export const routes: Routes = [
     
     },
     {
-        path: 'book/:id',
-        loadComponent: () => import('./books/book-detail/book-detail').then(c => c.BookDetail),
-        canActivate: [authGuard, roleGuard(['Librarian','Customer'])]
-    },
-    {
         path: 'book/edit/:id',
         loadComponent: () => import('./books/book-add/book-add').then(c => c.BookAdd),
         canActivate: [authGuard, roleGuard(['Librarian'])]
+    },
+    {
+        path: 'book/:id',
+        loadComponent: () => import('./books/book-detail/book-detail').then(c => c.BookDetail),
+        canActivate: [authGuard, roleGuard(['Librarian','Customer'])]
     },
     {
         path: 'cart',
