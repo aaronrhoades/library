@@ -1,5 +1,15 @@
 @if(!!cart().length && !isCartPage()) {
-    <div class="fixed-bottom d-flex justify-content-center align-items-center float-cart p-3 shadow-lg align-middle">
+    @if(isSticky()) {
+        <div class="placeholder">
+            <!-- 
+                placeholder so that the screen does not jump
+                when stick header becomes active and is no
+                longer part of the page layout. Screen content
+                remains visible
+             -->
+        </div>
+    }
+    <div #stickyBar [class.fixed-top]="isSticky()" class="d-flex justify-content-center align-items-center float-cart p-3 mb-5 align-middle">
         <p class="my-auto">You have {{cart().length}} {{cart().length | i18nPlural : itemMapping}} in your cart.</p>
         <button class="btn btn-primary ms-3" [routerLink]="'/cart'">View Cart</button>
     </div>
