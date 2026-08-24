@@ -1,0 +1,6 @@
+@if(!!cart().length && !isCartPage()) {
+    <div class="fixed-bottom d-flex justify-content-center align-items-center float-cart p-3 shadow-lg align-middle">
+        <p class="my-auto">You have {{cart().length}} {{cart().length | i18nPlural : itemMapping}} in your cart.</p>
+        <button class="btn btn-primary ms-3" [routerLink]="'/cart'">View Cart</button>
+    </div>
+}
