@@ -13,8 +13,8 @@ export class ReturnRentalService {
         return this.http.get<IUserRentalGroupDto[]>(`${this.apiUrl}/book/rentals-by-user`);
     }
 
-    getRentalsByUserEmail(userEmail: string) {
-
+    getRentalsByUserEmail(email: string) {
+        return this.http.get<IUserRentalGroupDto[]>(`${this.apiUrl}/book/rentals-by-user`, { params: { email } });
     }
     returnRental(bookId: string) {
         return this.http.patch(`${this.apiUrl}/book/return`, null, { params: { bookId } });

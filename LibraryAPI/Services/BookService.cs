@@ -3,6 +3,7 @@ using LibraryAPI.Data;
 using LibraryAPI.Models;
 using LibraryAPI.Models.Filters;
 using LibraryAPI.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryAPI.Services;
 public interface IBookService
@@ -17,7 +18,7 @@ public interface IBookService
     Task<List<Book>?> RentBooksAsync(Guid[] bookIds, Guid userId);
 
     Task<bool> ReturnBookAsync(Guid bookId);
-    Task<List<UserRentalGroupDto>> GetRentalsGroupByUserAsync();
+    Task<List<UserRentalGroupDto>> GetRentalsGroupByUserAsync(string? email);
 }
 public class BookService : IBookService
 {
@@ -198,9 +199,39 @@ public class BookService : IBookService
 
         return true;
     }
-    public async Task<List<UserRentalGroupDto>> GetRentalsGroupByUserAsync()
+    public async Task<List<UserRentalGroupDto>> GetRentalsGroupByUserAsync(string? email)
     {
+        IQueryable<Book> books = _context.Books;
+
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            var normalizedEmail = email.Trim().ToUpperInvariant();
+            var user = await _context.Users
+                .SingleOrDefaultAsync(candidate => candidate.NormalizedEmail == normalizedEmail);
+
+            if (user is null)
+            {
+                return new List<UserRentalGroupDto>();
+            }
+
+            var rentals = await _context.Books
+                .Include(book => book.Categories)
+                .Where(book => book.UserId == user.Id)
+                .ToListAsync();
+
+            return new List<UserRentalGroupDto>
+            {
+                new UserRentalGroupDto
+                {
+                    UserId = user.Id,
+                    Email = user.Email ?? email.Trim(),
+                    Rentals = rentals
+                }
+            };
+        }
+
         return await _context.Books
+            .Include(book => book.Categories)
             .Where(book => book.UserId != null)
             .GroupBy(book => new
             {

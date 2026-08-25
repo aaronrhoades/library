@@ -1,13 +1,36 @@
 <div class="container">
-    @if(rentalsByUser().length > 0)
-    {
-        @for(rentalByUser of rentalsByUser(); track rentalByUser.email) {
-            <h1>{{rentalByUser?.email}} ({{rentalByUser.rentals.length}})</h1>
-            @for(rental of rentalByUser.rentals; track rental.id) {
-                <app-return-rental-item [rental]="rental" (returnRental)="returnBook($event)"></app-return-rental-item>
+    <form (submit)="searchByUser($event)">
+        <label for="userEmail" class="form-label">Email</label>
+        <input id="userEmail" placeholder="Enter customer email..." type="text" class="form-control" [formField]="userSearchForm.email">
+        <div class="my-3">
+            <button class="btn btn-primary" type="submit">Search</button>
+            @if(byUser())
+            {
+                <a href="#" (click)="clearUser($event)" class="ms-3">Clear</a>
+            }
+        </div>
+    </form>
+    <div class="my-5">
+
+        @if(rentalsByUser().length > 0)
+        {
+            @for(rentalByUser of rentalsByUser(); track rentalByUser.email) {
+                <h1 class="my-5">{{rentalByUser?.email}} ({{rentalByUser.rentals.length}})</h1>
+                @for(rental of rentalByUser.rentals; track rental.id) {
+                    <div class="p-5 rental-item">
+                        <app-return-rental-item [rental]="rental" (returnRental)="returnBook($event)"></app-return-rental-item>
+                    </div>
+                }
+                @if(rentalByUser.rentals.length === 0) {
+                    <p>This user has no outstanding rentals.</p>
+                }
+            }
+        } @else {
+            @if(byUser()) {
+                <p>There are no users that match your search.</p>
+            } @else {
+                <p>There are no outstanding rentals.</p>
             }
         }
-    } @else {
-        <p>There are no outstanding rentals.</p>
-    }
+    </div>
 </div>

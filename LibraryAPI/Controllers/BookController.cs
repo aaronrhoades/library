@@ -119,9 +119,9 @@ public class BookController : ControllerBase
     }
     [Authorize(Roles ="Librarian")]
     [HttpGet("rentals-by-user")]
-    public async Task<ActionResult> GetRentalsGroupByUser()
+    public async Task<ActionResult> GetRentalsGroupByUser([FromQuery] string? email)
     {
-        List<UserRentalGroupDto> booksByUserId = await _bookService.GetRentalsGroupByUserAsync();
+        List<UserRentalGroupDto> booksByUserId = await _bookService.GetRentalsGroupByUserAsync(email);
 
         return Ok(booksByUserId);
     }
