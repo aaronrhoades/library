@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, output, signal } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
 import { AuthService } from '../auth-service';
 import { IRole } from '@models/iRole';
@@ -19,13 +19,16 @@ export class Register implements OnInit {
     password: '',
     role: 'Customer'
   });
-
+  errors = signal<string | null>(null);
+  private errorEffect = effect(() => {
+    this.registerModel()
+    this.errors.set(null);
+  });
   registerForm = form(this.registerModel, schema => {
     required(schema.email),
     required(schema.userName),
     required(schema.password)
-  })
-
+  });
   ngOnInit() {
     this.authService.getAllRoles().subscribe({
       next: roles => {
@@ -45,7 +48,9 @@ export class Register implements OnInit {
         next: () => {
           this.registrationComplete.emit(true);
         },
-        error: (err) => console.log('registration failed', err)
+        error: (err) => {
+          this.errors.set(err.error.message);
+        }
       }
     );
   }

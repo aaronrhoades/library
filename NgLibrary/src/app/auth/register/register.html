@@ -19,6 +19,9 @@
             }
         </select>
     </div>
+    @if(errors()){
+        <p class="text-danger">{{errors()}}</p>
+    }
     <button class="btn btn-primary" type="submit">
         Register
     </button>
