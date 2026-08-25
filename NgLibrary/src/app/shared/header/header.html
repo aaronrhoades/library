@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container d-print-none">
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
             <span class="fs-4">Library</span>
@@ -7,7 +7,7 @@
             <ul class="nav nav-pills">
                 <li class="nav-item"><a class="nav-link" routerLink="/books" routerLinkActive="active">Books</a></li>
                 @if(authService.userRoles()?.some(x => x === 'Customer')) {
-                    <li class="nav-item"><a class="nav-link" routerLink="/cart" routerLinkActive="active">Cart</a></li>
+                    <li class="nav-item"><a class="nav-link" routerLink="/cart" routerLinkActive="active">My Cart</a></li>
                 }
                 @if(authService.userRoles()?.some(x => x === 'Librarian')) {
                     <li class="nav-item"><a class="nav-link" routerLink="/return-rentals" routerLinkActive="active">Return Rentals</a></li>
