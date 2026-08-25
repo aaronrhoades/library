@@ -3,8 +3,7 @@ import { form, FormField, readonly, required } from '@angular/forms/signals';
 import { IRole } from '@models/iRole';
 import { AuthService } from '../auth-service';
 import { IRoleAssignment } from '@models/iRoleAssignment';
-import { Router } from '@angular/router';
-import { switchMap, tap } from 'rxjs';
+import { tap } from 'rxjs';
 
 @Component({
   imports: [FormField],
@@ -15,7 +14,6 @@ import { switchMap, tap } from 'rxjs';
 export class RoleAssignment implements OnInit{
   roles = signal<IRole[]>([]);
   authService = inject(AuthService);
-  router = inject(Router);
   roleAssignmentModel = signal<IRoleAssignment>({email: '', role: ''});
   roleAssignmentForm = form(this.roleAssignmentModel, schema => {
     required(schema.role),
@@ -44,15 +42,8 @@ export class RoleAssignment implements OnInit{
       role: this.roles().find(x=> x.id === formValue.role)?.name || ''
 
     }).pipe(
-      switchMap(x => {
-        return this.authService.checkSession();
-      })
+      tap(() => this.authService.logout('/login'))
     )
-    .subscribe({
-      next: () => {
-        this.authService.checkSession();
-        this.router.navigate(['/books']);
-      }
-    });
+    .subscribe();
   }
 }

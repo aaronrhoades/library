@@ -11,6 +11,14 @@
         <label>Password</label>
         <input type="password" class="form-control" [formField]="registerForm.password">
     </div>
+    <div class="my-3">
+        <label for="role">Role</label>
+        <select id="role" class="form-select" [formField]="registerForm.role">
+            @for(role of roles(); track role.id) {
+                <option [value]="role.name">{{ role.name }}</option>
+            }
+        </select>
+    </div>
     <button class="btn btn-primary" type="submit">
         Register
     </button>

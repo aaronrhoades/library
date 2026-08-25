@@ -60,7 +60,7 @@ export class AuthService {
   }
 
   register(user: IRegistration) : Observable<unknown> {
-    return this.http.post<unknown>(`${this.apiUrl}/register`, user)
+    return this.http.post<unknown>(`${this.apiUrl}/auth/register`, user)
   }
 
   login(credentials: ILogin): Observable<UserProfile | null> {
@@ -77,14 +77,14 @@ export class AuthService {
       })
     );
   }
-  logout() {
+  logout(redirectTo = '/') {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('expire_time');
     this.cartService.clearCart();
     this.userProfile.set(null);
     this.tokenSignal.set(null);
-    this.router.navigate(['/']);
+    this.router.navigate([redirectTo]);
   }
   refreshToken(): Observable<any> {
     const refreshToken = localStorage.getItem('refresh_token');

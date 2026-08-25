@@ -22,7 +22,58 @@ public class AuthController : ControllerBase
         _context = context;
     }
 
-    [Authorize] // 🔒 Rejects the request immediately if the HttpOnly cookie is missing or invalid
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
+    {
+        var duplicateFields = new List<string>();
+
+        if (await _userManager.FindByNameAsync(request.UserName) is not null)
+        {
+            duplicateFields.Add("username");
+        }
+
+        if (await _userManager.FindByEmailAsync(request.Email) is not null)
+        {
+            duplicateFields.Add("email");
+        }
+
+        if (duplicateFields.Count > 0)
+        {
+            return BadRequest(new
+            {
+                Message = $"The following values are already in use: {string.Join(" and ", duplicateFields)}."
+            });
+        }
+
+        if (!await _roleManager.RoleExistsAsync(request.Role))
+        {
+            return BadRequest(new { Message = $"The role '{request.Role}' does not exist." });
+        }
+
+        var user = new User
+        {
+            UserName = request.UserName,
+            Email = request.Email
+        };
+
+        var result = await _userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            return BadRequest(new { Errors = result.Errors });
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(user, request.Role);
+        if (!roleResult.Succeeded)
+        {
+            await _userManager.DeleteAsync(user);
+            return BadRequest(new { Errors = roleResult.Errors });
+        }
+
+        return Ok(new { Message = "Registration successful." });
+    }
+
+    [Authorize]
     [HttpGet("me")]
     public async Task<IActionResult> GetCurrentUserAsync()
     {
@@ -43,7 +94,7 @@ public class AuthController : ControllerBase
             UserName = username
         });
     }
-    [Authorize]
+    [AllowAnonymous]
     [HttpGet("role")]
     public async Task<IActionResult> GetAllRoles()
     {
@@ -92,5 +143,6 @@ public class AuthController : ControllerBase
 
         return Ok(new { Message = $"Successfully assigned {request.Email} to the '{request.Role}' role." });
     }
+    public record RegisterRequest(string UserName, string Email, string Password, string Role);
     public record UserRoleRequest(string Email, string Role);
 }
