@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { BookService } from '../book-service';
 import { IBook } from '@models/iBook';
 import { IBookSearchFilter } from '@models/iBookSearchFilter';
@@ -35,6 +35,10 @@ export class BookList implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   public books = signal<IBook[] | null>(null);
+  public pageNumber = signal(1);
+  public pageSize = 10;
+  public totalPages = signal(0);
+  public totalCount = signal(0);
 
   searchModel = signal<BookSearchFilterForm>({
     title: '',
@@ -51,11 +55,21 @@ export class BookList implements OnInit {
   });
 
   debouncedQuery = computed(() => this.searchForm().value());
-  debouncedQuery$ = toObservable(this.debouncedQuery);
+  pagedQuery = computed(() => ({
+    ...this.debouncedQuery(),
+    pageNumber: this.pageNumber(),
+    pageSize: this.pageSize,
+  }));
+  debouncedQuery$ = toObservable(this.pagedQuery);
+
+  constructor() {
+    effect(() => {
+      this.debouncedQuery();
+      this.pageNumber.set(1);
+    });
+  }
 
   ngOnInit(): void {
-    this.getAndSetAllBooks();
-
     this.debouncedQuery$
       .pipe(
         distinctUntilChanged((prev, curr) =>
@@ -63,7 +77,9 @@ export class BookList implements OnInit {
           prev.author === curr.author &&
           prev.available === curr.available &&
           prev.sortBy === curr.sortBy &&
-          prev.sortDirection === curr.sortDirection),
+          prev.sortDirection === curr.sortDirection &&
+          prev.pageNumber === curr.pageNumber &&
+          prev.pageSize === curr.pageSize),
         switchMap(() => {
           const formValue = this.searchForm().value();
           const rawAvailable = formValue.available;
@@ -75,6 +91,8 @@ export class BookList implements OnInit {
             available,
             sortBy: formValue.sortBy ?? 'Title',
             sortDirection: formValue.sortDirection ?? 'asc',
+            pageNumber: this.pageNumber(),
+            pageSize: this.pageSize,
           };
 
           return this.bookService.searchBooks(filter);
@@ -82,7 +100,11 @@ export class BookList implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
-        next: books => this.books.set(books),
+        next: result => {
+          this.books.set(result.items);
+          this.totalCount.set(result.totalCount);
+          this.totalPages.set(result.totalPages);
+        },
       });
   }
 
@@ -101,6 +123,12 @@ export class BookList implements OnInit {
     });
   }
 
+  goToPage(pageNumber: number): void {
+    if (pageNumber >= 1 && pageNumber <= this.totalPages()) {
+      this.pageNumber.set(pageNumber);
+    }
+  }
+
   sortIndicator(column: SortField): string {
     const current = this.searchModel();
     if (current.sortBy !== column) return '';
@@ -115,12 +143,9 @@ export class BookList implements OnInit {
     this.cartService.addToCart(book);
   }
 
-  getAndSetAllBooks(): void {
-    this.bookService.searchBooks({
-      sortBy: 'Title',
-      sortDirection: 'asc',
-    }).subscribe(books => {
-      this.books.set(books);
-    });
+  removeBookFromCart(book: IBook, event: Event) {
+    event.preventDefault();
+    this.cartService.removeFromCart(book);
   }
+
 }

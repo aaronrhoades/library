@@ -24,6 +24,10 @@ export class BookCard {
     // Navigate to the book detail page using the book's ID
     this.router.navigate([`/book/${this.book().id}`]);
   }
+  removeFromCart(event: Event) {
+    event.preventDefault();
+    this.cartService.removeFromCart(this.book());
+  }
   addToCart() {
     this.cartService.addToCart(this.book());
   }

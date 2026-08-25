@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibraryAPI.Services;
 public interface IBookService
 {
-    Task<List<Book>> SearchBooksAsync(BookSearchFilter filter);
+    Task<PagedResult<Book>> SearchBooksAsync(BookSearchFilter filter);
     Task<List<Book>> GetAllBooksAsync();
     Task<List<Book>> GetFeaturedBooksAsync();
     Task<Book?> GetBookByIdAsync(Guid id);
@@ -28,16 +28,13 @@ public class BookService : IBookService
     {
         _context = context;
     }
-    public async Task<List<Book>> SearchBooksAsync(BookSearchFilter filter)
+    public async Task<PagedResult<Book>> SearchBooksAsync(BookSearchFilter filter)
     {
         var query = _context.Books
             .Include(book => book.Categories)
             .AsQueryable();
 
-        if (filter is null)
-        {
-            return await query.OrderBy(book => book.Title).ToListAsync();
-        }
+        filter ??= new BookSearchFilter();
 
         if (!string.IsNullOrWhiteSpace(filter.Title))
         {
@@ -71,7 +68,21 @@ public class BookService : IBookService
                 : query.OrderBy(book => book.Title)
         };
 
-        return await query.ToListAsync();
+        var pageNumber = Math.Max(filter.PageNumber, 1);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 100);
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<Book>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<List<Book>> GetAllBooksAsync()

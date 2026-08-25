@@ -34,7 +34,7 @@
           </th>
           <th>Info</th>
           <th>Available</th>
-          <th style="width: 220px;">Actions</th>
+          <th style="width: 260px;">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -59,7 +59,12 @@
               <button class="btn btn-primary btn-sm" (click)="viewBookDetails(book.id)">View Details</button>
               @if(authService.userRoles()?.some(x => x === 'Customer'))
               {
-                <button (click)="addBookToCart(book)" class="btn btn-success btn-sm ms-3" [disabled]="(!book.isAvailable || cartService.isInCart(book))">Add to Cart</button>
+                @if(cartService.isInCart(book))
+                {
+                  <a href="#" (click)="removeBookFromCart(book, $event)" class="text-danger ms-3">Remove From Cart</a>
+                } @else {
+                  <button (click)="addBookToCart(book)" class="btn btn-success btn-sm ms-3" [disabled]="(!book.isAvailable || cartService.isInCart(book))">Add to Cart</button>
+                }
               }
             </td>
           </tr>
@@ -68,6 +73,17 @@
     </table>
     @if(books()?.length === 0) {
       <p>There are no books that match your search.</p>
+    }
+    @if(totalPages() > 1) {
+      <nav class="d-flex justify-content-center align-items-center gap-3 my-4" aria-label="Book pages">
+        <button class="btn btn-outline-primary" (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1">
+          Previous
+        </button>
+        <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+        <button class="btn btn-outline-primary" (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()">
+          Next
+        </button>
+      </nav>
     }
 </div>
 <div class="container">

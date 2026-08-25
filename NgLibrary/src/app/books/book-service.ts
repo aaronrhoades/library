@@ -5,11 +5,19 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { IBookSearchFilter } from '@models/iBookSearchFilter';
 
+export interface IBookSearchResult {
+    items: IBook[];
+    pageNumber: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+}
+
 @Service()
 export class BookService {
     private http: HttpClient = inject(HttpClient);
     
-    searchBooks(searchTerm: IBookSearchFilter) : Observable<IBook[]> {
+    searchBooks(searchTerm: IBookSearchFilter) : Observable<IBookSearchResult> {
         let params = new HttpParams();
         if(!!searchTerm.title)
             params = params.set('title', searchTerm.title);
@@ -26,7 +34,13 @@ export class BookService {
         if (searchTerm.sortDirection) {
         params = params.set('sortDirection', searchTerm.sortDirection);
         }
-        return this.http.get<IBook[]>(`${environment.apiUrl}/book/search`, { params });
+        if (searchTerm.pageNumber) {
+        params = params.set('pageNumber', String(searchTerm.pageNumber));
+        }
+        if (searchTerm.pageSize) {
+        params = params.set('pageSize', String(searchTerm.pageSize));
+        }
+        return this.http.get<IBookSearchResult>(`${environment.apiUrl}/book/search`, { params });
     }
     getAllBooks() : Observable<IBook[]> {
         return this.http.get<IBook[]>(`${environment.apiUrl}/book`);

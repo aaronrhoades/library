@@ -22,7 +22,7 @@ public class BookController : ControllerBase
     }
     [Authorize(Roles = "Librarian,Customer")]
     [HttpGet("search", Name = "SearchBooks")]
-    public async Task<ActionResult<IEnumerable<Book>>> Search([FromQuery] BookSearchFilter filter)
+    public async Task<ActionResult<PagedResult<Book>>> Search([FromQuery] BookSearchFilter filter)
     {
         var books = await _bookService.SearchBooksAsync(filter);
         return Ok(books);

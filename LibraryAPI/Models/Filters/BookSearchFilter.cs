@@ -7,4 +7,6 @@ public class BookSearchFilter
 
     public string SortBy { get; set; } = "Title";
     public string SortDirection { get; set; } = "asc";
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
 }

@@ -4,4 +4,6 @@ export interface IBookSearchFilter {
   available?: boolean;
   sortBy?: string;
   sortDirection?: string;
+  pageNumber?: number;
+  pageSize?: number;
 }

@@ -37,6 +37,13 @@ export class BookDetail {
       this.cartService.addToCart(this.book() as IBook);
     }
   }
+  removeFromCart(event: Event)
+  {
+    event.preventDefault();
+    if(this.book() != null) {
+      this.cartService.removeFromCart(this.book() as IBook)
+    }
+  }
   onEdit() {
     this.router.navigate([`/book/edit/${this.id()}`]);
   }
