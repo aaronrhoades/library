@@ -1,0 +1,34 @@
+
+<div class="container">
+    <button class="btn-primary btn d-print-none" (click)="print()">Print</button>
+    <div>
+        <h1>Receipt</h1>
+        @if(!!receipt()?.length) {
+            <p>All set! Your books are successfully checked out.</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Book Name</th>
+                        <th>Author</th>
+                        <th>Categories</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(book of receipt(); track book.id) {
+                        <tr>
+                            
+                            <td>{{book.title}}</td>
+                            <td>{{book.author}}</td>
+                            <td>{{book.categories.map(x => x.name).join(', ')}}</td>
+                            <td>{{book.dueDate | date : 'M/d/yyyy'}}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        } @else {
+            <p>There was an error loading your receipt.</p>
+        }
+    </div>
+    <button class="btn btn-primary d-print-none" [routerLink]="'/books'">Back to Books</button>
+</div>

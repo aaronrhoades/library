@@ -162,7 +162,10 @@ public class BookService : IBookService
             return null;
         }
         DateTime dueDate = DateTime.Now.Date.AddDays(5);
-        var booksToRent = await _context.Books.Where(book => bookIds.Contains(book.Id)).ToListAsync();
+        var booksToRent = await _context.Books
+            .Include(book => book.Categories)
+            .Where(book => bookIds.Contains(book.Id))
+            .ToListAsync();
 
         if(booksToRent is null || booksToRent.Count == 0)
         {

@@ -9,10 +9,13 @@ export class CartService {
     private http = inject(HttpClient);
     private apiUrl = environment.apiUrl;
     private readonly _cart = signal<IBook[]>(this.loadCart());
+    private readonly _receipt = signal<IBook[] | null>(null)
+    readonly receipt = this._receipt.asReadonly();
     readonly cart = this._cart.asReadonly();
 
     constructor() {
         this._cart.set(this.loadCart());
+        this._receipt.set(this.loadReceipt());
     }
 
     addToCart(book: IBook) {
@@ -47,22 +50,38 @@ export class CartService {
         return this.http.patch<IBook[]>(`${this.apiUrl}/book/rent`, this.cart().map(b => b.id))
         .pipe(
             tap((x) => {
-                console.log(x);
+                this._receipt.set(x);
+                this.saveReceipt(x);
                 this.clearCart();
             })
         );
     }
 
+    clearReceipt() {
+        this._receipt.set(null);
+        localStorage.removeItem('receipt');
+    }
+
     private saveCart(items: IBook[]) {
         localStorage.setItem('cart', JSON.stringify(items));
     }
-    
+    private saveReceipt(items: IBook[]) {
+        localStorage.setItem('receipt', JSON.stringify(items));
+    }
     private loadCart(): IBook[] {
         try {
             const raw = localStorage.getItem('cart');
             return raw ? JSON.parse(raw) as IBook[] : [];
         } catch {
             return [];
+        }
+    }
+    private loadReceipt(): IBook[] | null { 
+        try {
+            const raw = localStorage.getItem('receipt');
+            return raw ? JSON.parse(raw) as IBook[] : null;
+        } catch {
+            return null;
         }
     }
 }

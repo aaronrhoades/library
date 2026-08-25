@@ -3,7 +3,7 @@ import { CartService } from '../cart-service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IBook } from '@models/iBook';
 import { CartItem } from '../cart-item/cart-item';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
   imports: [CartItem, RouterLink],
@@ -13,6 +13,7 @@ import { RouterLink } from "@angular/router";
 })
 export class Cart implements OnInit{
   cartService = inject(CartService);
+  router = inject(Router);
   cart$ = toObservable(this.cartService.cart);
   cart = signal<IBook[]>([]);
 
@@ -22,6 +23,8 @@ export class Cart implements OnInit{
     });
   }
   checkout() {
-    this.cartService.checkout().subscribe();
+    this.cartService.checkout().subscribe(
+      () => this.router.navigate(['/receipt'])
+    );
   }
 }
