@@ -44,6 +44,7 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         // This ensures the DB is created and all pending migrations run
         await context.Database.MigrateAsync();
+        await context.SeedBooksAsync(100);
     }
     catch (Exception ex)
     {

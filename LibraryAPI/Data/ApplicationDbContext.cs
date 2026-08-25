@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LibraryAPI.Models;
+using Bogus;
 
 namespace LibraryAPI.Data;
 
@@ -13,12 +14,72 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
     public DbSet<Book> Books { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<SeedState> SeedStates { get; set; }
+
+    public async Task SeedBooksAsync(int targetCount)
+    {
+        const string seedKey = "GeneratedBooks";
+        if (await SeedStates.AnyAsync(state => state.Key == seedKey))
+        {
+            return;
+        }
+
+        var bookCount = await Books.CountAsync();
+        var booksToCreate = targetCount - bookCount;
+        if (booksToCreate <= 0)
+        {
+            SeedStates.Add(new SeedState { Key = seedKey, CompletedAt = DateTime.UtcNow });
+            await SaveChangesAsync();
+            return;
+        }
+
+        var categories = await Categories.ToListAsync();
+        if (categories.Count == 0)
+        {
+            return;
+        }
+
+        var existingIsbns = (await Books.Select(book => book.ISBN).ToListAsync())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var faker = new Faker();
+        var books = new List<Book>();
+
+        while (books.Count < booksToCreate)
+        {
+            var isbn = $"978{faker.Random.Number(1000000000, 1999999999)}";
+            if (!existingIsbns.Add(isbn))
+            {
+                continue;
+            }
+
+            books.Add(new Book
+            {
+                Id = Guid.NewGuid(),
+                Title = faker.Lorem.Sentence(faker.Random.Int(2, 6)).TrimEnd('.'),
+                Description = faker.Lorem.Paragraph(),
+                ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop",
+                Author = faker.Name.FullName(),
+                ISBN = isbn,
+                Publisher = faker.Company.CompanyName(),
+                Categories = faker.PickRandom(categories, faker.Random.Int(1, Math.Min(3, categories.Count))).ToList(),
+                PublishedDate = faker.Date.Past(100),
+                Pages = faker.Random.Int(100, 1200)
+            });
+        }
+
+        Books.AddRange(books);
+        SeedStates.Add(new SeedState { Key = seedKey, CompletedAt = DateTime.UtcNow });
+        await SaveChangesAsync();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         SeedRoles(modelBuilder);
         SeedData(modelBuilder);
+
+        modelBuilder.Entity<SeedState>()
+            .HasKey(state => state.Key);
 
         modelBuilder.Entity<Book>()
             .HasOne(b => b.User)

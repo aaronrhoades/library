@@ -367,6 +367,19 @@ namespace LibraryAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("LibraryAPI.Models.SeedState", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("SeedStates");
+                });
+
             modelBuilder.Entity("LibraryAPI.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
