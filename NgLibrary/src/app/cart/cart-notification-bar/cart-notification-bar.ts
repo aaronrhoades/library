@@ -1,13 +1,11 @@
 import { Component, ElementRef, inject, NgZone, OnInit, signal, viewChild, OnDestroy } from '@angular/core';
 import { CartService } from '../cart-service';
-import { IBook } from '@models/iBook';
 import { NavigationEnd, Router, RouterLink } from "@angular/router";
 import { I18nPluralPipe } from '@angular/common';
 import { filter, fromEvent, Subscription } from 'rxjs';
-import { FormField } from "@angular/forms/signals"; 
 
 @Component({
-  imports: [RouterLink, I18nPluralPipe, FormField],
+  imports: [RouterLink, I18nPluralPipe],
   selector: 'app-cart-notification-bar',
   styleUrl: './cart-notification-bar.scss',
   templateUrl: './cart-notification-bar.html',
