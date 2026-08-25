@@ -7,5 +7,5 @@ This app was created using `ng new` and `dotnet new webapi --use-controllers` in
 1. `dotnet restore` and `dotnet build` in LibraryAPI to install dotnet dependencies and build the project.
 
 ## Running the Project
-1. Frontend: Open a terminal and run `npm start` on the NgLibrary project.
-1. Backend: Using VSCode, click "Run" -> "Start Debugging" or press F5 to start the dotnet project.
+1. Frontend: Open a terminal and run `npm start` in the NgLibrary directory.
+1. Backend: Using VSCode, click "Run" -> "Start Debugging" or press F5 to start the dotnet project. Alternatively, you can use `dotnet run` in the LibraryAPI directory.
