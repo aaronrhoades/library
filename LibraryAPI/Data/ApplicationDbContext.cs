@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LibraryAPI.Models;
 using Bogus;
+using System.Globalization;
 
 namespace LibraryAPI.Data;
 
@@ -43,6 +44,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var faker = new Faker();
         var books = new List<Book>();
+        var textInfo = CultureInfo.InvariantCulture.TextInfo;
 
         while (books.Count < booksToCreate)
         {
@@ -51,11 +53,12 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             {
                 continue;
             }
-
+            string rawSentence = faker.Lorem.Sentence(faker.Random.Int(2, 6)).TrimEnd('.');
+            string titleCased = textInfo.ToTitleCase(rawSentence.ToLowerInvariant());
             books.Add(new Book
             {
                 Id = Guid.NewGuid(),
-                Title = faker.Lorem.Sentence(faker.Random.Int(2, 6)).TrimEnd('.'),
+                Title = titleCased,
                 Description = faker.Lorem.Paragraph(),
                 ImageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=2574&auto=format&fit=crop",
                 Author = faker.Name.FullName(),
