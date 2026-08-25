@@ -33,7 +33,9 @@
             Author {{ sortIndicator('Author') }}
           </th>
           <th>Info</th>
-          <th>Available</th>
+          <th (click)="toggleSort('Available')" style="cursor: pointer; min-width: 100px;">
+            Available {{ sortIndicator('Available') }}
+          </th>
           <th style="width: 260px;">Actions</th>
         </tr>
       </thead>

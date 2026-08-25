@@ -10,7 +10,7 @@ import { AuthService } from '../../auth/auth-service';
 import { CartService } from '../../cart/cart-service';
 import { FeaturedBooks } from '../featured-books/featured-books';
 
-type SortField = 'Title' | 'Author';
+type SortField = 'Title' | 'Author' | 'Available';
 type SortDirection = 'asc' | 'desc';
 
 interface BookSearchFilterForm {

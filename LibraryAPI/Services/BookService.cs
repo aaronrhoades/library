@@ -63,6 +63,11 @@ public class BookService : IBookService
             "Author" => sortDirection == "desc"
                 ? query.OrderByDescending(book => book.Author)
                 : query.OrderBy(book => book.Author),
+            "Available" => sortDirection == "desc"
+                ? query.OrderByDescending(book => book.UserId == null ? 0 : 1)
+                    .ThenBy(book => book.Title)
+                : query.OrderBy(book => book.UserId == null ? 0 : 1)
+                    .ThenBy(book => book.Title),
             _ => sortDirection == "desc"
                 ? query.OrderByDescending(book => book.Title)
                 : query.OrderBy(book => book.Title)
