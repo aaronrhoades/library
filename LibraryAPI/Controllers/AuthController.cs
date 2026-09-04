@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace YourApi.Controllers;
+namespace LibraryAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
