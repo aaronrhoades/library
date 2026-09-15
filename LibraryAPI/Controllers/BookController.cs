@@ -89,8 +89,7 @@ public class BookController : ControllerBase
 
     [Authorize(Roles = "Customer")]
     [HttpPatch("rent")]
-    
-    public async Task<ActionResult> RentBooks(Guid[] bookIds)
+    public async Task<ActionResult> RentBooks([FromBody] Guid[] bookIds)
     {   
         var user = await _userManager.GetUserAsync(User);
         if (user is null)

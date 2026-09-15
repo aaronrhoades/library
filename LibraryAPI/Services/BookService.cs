@@ -6,6 +6,7 @@ using LibraryAPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryAPI.Services;
+
 public interface IBookService
 {
     Task<PagedResult<Book>> SearchBooksAsync(BookSearchFilter filter);
@@ -16,7 +17,6 @@ public interface IBookService
     Task<bool> UpdateBookAsync(Book book);
     Task DeleteBookAsync(Guid id);
     Task<List<Book>?> RentBooksAsync(Guid[] bookIds, Guid userId);
-
     Task<bool> ReturnBookAsync(Guid bookId);
     Task<List<UserRentalGroupDto>> GetRentalsGroupByUserAsync(string? email);
 }
@@ -94,6 +94,7 @@ public class BookService : IBookService
     {
         return await _context.Books.Include(b => b.Categories).ToListAsync();
     }
+
     public async Task<List<Book>> GetFeaturedBooksAsync()
     {
         return await _context.Books
@@ -102,6 +103,7 @@ public class BookService : IBookService
             .Take(5)
             .ToListAsync();
     }
+
     public async Task<Book?> GetBookByIdAsync(Guid id)
     {
         return await _context.Books.Include(b => b.Categories).FirstOrDefaultAsync(b => b.Id == id);
@@ -172,9 +174,9 @@ public class BookService : IBookService
     }
     public async Task<List<Book>?> RentBooksAsync(Guid[] bookIds, Guid userId)
     {
-        
+
         var user = await _context.Users.FindAsync(userId);
-        if(user is null)
+        if (user is null)
         {
             return null;
         }
@@ -184,13 +186,14 @@ public class BookService : IBookService
             .Where(book => bookIds.Contains(book.Id))
             .ToListAsync();
 
-        if(booksToRent is null || booksToRent.Count == 0)
+        if (booksToRent is null || booksToRent.Count == 0)
         {
             return null;
         }
         var rentedBooks = new List<Book>();
-        booksToRent.ForEach(b => {
-            if(b.UserId == null && b.DueDate == null)
+        booksToRent.ForEach(b =>
+        {
+            if (b.UserId == null && b.DueDate == null)
             {
                 b.UserId = userId;
                 b.DueDate = dueDate;
@@ -203,7 +206,7 @@ public class BookService : IBookService
     public async Task<bool> ReturnBookAsync(Guid bookId)
     {
         var book = await _context.Books.FindAsync(bookId);
-        if(book is null)
+        if (book is null)
         {
             return false;
         }
