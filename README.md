@@ -9,3 +9,6 @@ This app was created using `ng new` and `dotnet new webapi --use-controllers` in
 ## Running the Project
 1. Frontend: Open a terminal and run `npm start` in the NgLibrary directory.
 1. Backend: Using VSCode, click "Run" -> "Start Debugging" or press F5 to start the dotnet project. Alternatively, you can use `dotnet run` in the LibraryAPI directory.
+
+## Running Unit Tests
+Unit tests can be run by using `dotnet test LibraryAPI.Tests` from the main directory.
