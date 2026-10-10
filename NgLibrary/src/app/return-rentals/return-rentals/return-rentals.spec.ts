@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { ReturnRentalService } from '../return-rental-service';
 import { ReturnRentals } from './return-rentals';
 
 describe('ReturnRentals', () => {
@@ -8,6 +10,14 @@ describe('ReturnRentals', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ReturnRentals],
+      providers: [{
+        provide: ReturnRentalService,
+        useValue: {
+          getRentalsGroupByUserEmail: () => of([]),
+          getRentalsByUserEmail: () => of([]),
+          returnRental: () => of(undefined),
+        },
+      }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ReturnRentals);

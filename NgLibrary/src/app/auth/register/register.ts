@@ -2,6 +2,7 @@ import { Component, effect, inject, OnInit, output, signal } from '@angular/core
 import { form, FormField, required } from '@angular/forms/signals';
 import { AuthService } from '../auth-service';
 import { IRole } from '@models/iRole';
+import { IRegistration } from '@models/iRegistration';
 
 @Component({
   imports: [FormField],

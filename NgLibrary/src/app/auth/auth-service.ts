@@ -3,6 +3,7 @@ import { computed, inject, Service, signal } from '@angular/core';
 import { catchError, Observable, of, tap, map, switchMap } from 'rxjs';
 import { environment } from '@environments/environment';
 import { ILogin } from '@models/iLogin';
+import { IRegistration } from '@models/iRegistration';
 import { Router } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IRole } from '@models/iRole';
