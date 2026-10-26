@@ -190,16 +190,16 @@ public class BookService : IBookService
         {
             return null;
         }
+
+        Func<Book, bool> canRent = book => book.UserId == null && book.DueDate == null;
         var rentedBooks = new List<Book>();
-        booksToRent.ForEach(b =>
+        foreach (var book in booksToRent.Where(canRent))
         {
-            if (b.UserId == null && b.DueDate == null)
-            {
-                b.UserId = userId;
-                b.DueDate = dueDate;
-                rentedBooks.Add(b);
-            }
-        });
+            book.UserId = userId;
+            book.DueDate = dueDate;
+            rentedBooks.Add(book);
+        }
+
         await _context.SaveChangesAsync();
         return rentedBooks;
     }
